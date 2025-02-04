@@ -136,20 +136,38 @@ namespace CrawFB
                 foreach (Person person2 in person)
                 {
                     string linkfb = person2.LinkFb.ToString();
+                    Console.WriteLine(linkfb);
                     List<string> thongtincn = new List<string>();
-                    thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb + "/about");
-                    string songtai = "";
-                    string dentu = "";
-                    if (thongtincn.Count > 0)
+                    if(linkfb != "")
                     {
-                        foreach (string t in thongtincn)
+                        thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb + "/about");
+                        foreach(string t in thongtincn)
                         {
-                            if (string.Compare(t, "sống tại") == 0) { songtai = t; }
-                            if (string.Compare(t, "đến từ") == 0) { dentu = t; }
+                            Console.WriteLine(t);
+                        }    
+                        int sophantu = thongtincn.Count;
+                        //string songtai = thongtincn[1];
+
+                        string dentu = thongtincn[sophantu-1];
+                        /*for (int i = 0; i < thongtincn.Count; i++)
+                        {
+                            if (thongtincn[i] == "songtai")
+                            {
+                                songtai = thongtincn[i + 1];
+                                Console.WriteLine(songtai);
+                            }
+                            if (thongtincn[i] == "dentu")
+                                {
+                                    dentu = thongtincn[i + 1];
+                                Console.WriteLine(dentu);
+                                }
                         }
-                    }
-                    dgvGetShareOnePost.Rows.Add(j++, "", linkfb, songtai, dentu);
+                        */
+                        dgvGetShareOnePost.Rows.Add(j, "", linkfb, "", dentu);
+
+                    }                             
                 }
+                Driver.Quit();
             }
             else { MessageBox.Show("Chưa nhập địa chỉ bài viết"); }
            

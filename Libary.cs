@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CrawFB.DTO;
 using DevExpress.Data.Helpers;
+using DevExpress.Data.NetCompatibility.Extensions;
 using DevExpress.Skins;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -67,17 +68,19 @@ namespace CrawFB
                 //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
                 last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
                 Console.WriteLine(last_count);
-                for (int i = 0; i < 2; i++)
-                {
-                    element2.SendKeys(Keys.End);
-                    element2.SendKeys(Keys.Up);
-                    element2.SendKeys(Keys.Up);
-                    element2.SendKeys(Keys.Up);
-                    element2.SendKeys(Keys.Down);
-                    element2.SendKeys(Keys.Down);
-                    element2.SendKeys(Keys.Down);
-                    Libary.Instance.randomtime(6000, 10000);
-                }
+                
+                    for (int i = 0; i < 2; i++)
+                    {
+                        element2.SendKeys(Keys.End);
+                        element2.SendKeys(Keys.Up);
+                        element2.SendKeys(Keys.Up);
+                        element2.SendKeys(Keys.Up);
+                        element2.SendKeys(Keys.Down);
+                        element2.SendKeys(Keys.Down);
+                        element2.SendKeys(Keys.Down);
+                        Libary.Instance.randomtime(6000, 10000);
+                    }
+                
                 new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
                 Console.WriteLine(new_count);
             }
@@ -93,28 +96,33 @@ namespace CrawFB
         }
         public List<string> thongtincanhan(ChromeDriver Driver, string link)
         {
-            string thongtincongviec, thongtinsongtai, thongtindentu = "";
+            string thongtinsongtai, thongtindentu = "";
             Driver.Url = link;
             randomtime(5000, 10000);
             List<string> thongtin = new List<string>();
             List<IWebElement> element = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span")));
+            randomtime(5000, 10000);
             if (element != null)
             {
                 foreach (IWebElement element2 in element)
                 {
-                    string temp1 = element2.Text;                   
-                    if(temp1 == "Sống tại")
+                    string temp1 = element2.Text; 
+                    //thongtin.Add(temp1);                   
+                    if(temp1.Contains("Sống") == true)
                     {
                         List<IWebElement> songtai = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span>a>span>span")));
-                        thongtinsongtai = songtai[0].Text;                       
+                        thongtinsongtai = songtai[0].Text;
+                        thongtin.Add("songtai");
+                        thongtin.Add(thongtinsongtai);                      
                     }    
-                    if(temp1 == "Đến từ")
+                    if(temp1.Contains("Đến") == true)
                     {
                         List<IWebElement> songtai = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span>a>span>span")));
                         thongtindentu = songtai[0].Text;
-                    }
-                    
-                }    
+                        thongtin.Add("dentu");
+                        thongtin.Add(thongtindentu);                     
+                    }   
+                }               
             }
             else { thongtin.Add("");}
             return thongtin;
@@ -179,7 +187,7 @@ namespace CrawFB
         public void randomtime (int time1,  int time2)
         {
             Random random = new Random();
-            int time = random.Next(time1, time2);
+            int time = random.Next(time1, time2);         
             Thread.Sleep(time);
         }
 
