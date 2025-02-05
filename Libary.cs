@@ -51,24 +51,35 @@ namespace CrawFB
         {
             List<Person> person = new List<Person>();
             Driver.Url = linkpost;
+            string sumshare = "";
             Libary.Instance.randomtime(6000, 10000);
             Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+            List<IWebElement> temp = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x1sur9pj xkrqix3']")));
+            sumshare = temp[temp.Count - 1].Text;
+            if (sumshare != "")
+            {
+                int index = sumshare.IndexOf(" ");
+                sumshare = sumshare.Substring(0, index);
+            }
             List<IWebElement> share = new List<IWebElement>(Driver.FindElements(By.XPath("//span[contains(@class,'x1vvkbs x1sur9pj xkrqix3')]")));
             if (share.Count > 0)
             {
                 share[share.Count - 1].Click();
                 Thread.Sleep(10000);
             }
-            IWebElement element2 = Driver.FindElement(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']"));
-            int last_count = 0;
-            int new_count = 0;
-            do
+            int a = Convert.ToInt32(sumshare);
+            if (a > 10)
             {
-                Libary.Instance.randomtime(6000, 10000);
-                //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
-                last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
-                Console.WriteLine(last_count);
-                
+                IWebElement element2 = Driver.FindElement(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']"));
+                int last_count = 0;
+                int new_count = 0;
+                do
+                {
+                    Libary.Instance.randomtime(6000, 10000);
+                    //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
+                    last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                    Console.WriteLine(last_count);
+
                     for (int i = 0; i < 2; i++)
                     {
                         element2.SendKeys(Keys.End);
@@ -80,11 +91,12 @@ namespace CrawFB
                         element2.SendKeys(Keys.Down);
                         Libary.Instance.randomtime(6000, 10000);
                     }
-                
-                new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
-                Console.WriteLine(new_count);
+
+                    new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                    Console.WriteLine(new_count);
+                }
+                while (last_count != new_count);
             }
-            while (last_count != new_count);
             List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class ^= 'x1yztbdb']>div>div>div>div>div>div>div>div>div>span>div>h3>span>span>a")));
             foreach (IWebElement element in fullshare)
             {
@@ -94,9 +106,24 @@ namespace CrawFB
             }
             return person;
         }
+        public string SumShare(ChromeDriver Driver, string linkbaiviet)
+        {
+            string sumshare = "";
+            Driver.Url = linkbaiviet;
+            Libary.Instance.randomtime(6000, 10000);
+            Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+            List<IWebElement> temp = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x1sur9pj xkrqix3']")));
+            sumshare = temp[temp.Count - 1].Text;
+            if(sumshare != "")
+            {
+                int index = sumshare.IndexOf(" ");
+                sumshare = sumshare.Substring(0, index);
+            }
+            return sumshare;
+        }
         public List<string> thongtincanhan(ChromeDriver Driver, string link)
         {
-            string thongtinsongtai, thongtindentu = "";
+            //string thongtinsongtai, thongtindentu = "";
             Driver.Url = link;
             randomtime(5000, 10000);
             List<string> thongtin = new List<string>();
@@ -106,22 +133,22 @@ namespace CrawFB
             {
                 foreach (IWebElement element2 in element)
                 {
-                    string temp1 = element2.Text; 
-                    //thongtin.Add(temp1);                   
-                    if(temp1.Contains("Sống") == true)
+                    string temp1 = element2.Text;                                 
+                   if(temp1.Contains("Sống") == true)
                     {
-                        List<IWebElement> songtai = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span>a>span>span")));
-                        thongtinsongtai = songtai[0].Text;
                         thongtin.Add("songtai");
-                        thongtin.Add(thongtinsongtai);                      
+                        int index = temp1.IndexOf("Sống tại");
+                        temp1 = temp1.Substring(index + 8, temp1.Length -1 );
+                        thongtin.Add(temp1);                      
                     }    
                     if(temp1.Contains("Đến") == true)
-                    {
-                        List<IWebElement> songtai = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span>a>span>span")));
-                        thongtindentu = songtai[0].Text;
+                    {                       
                         thongtin.Add("dentu");
-                        thongtin.Add(thongtindentu);                     
-                    }   
+                        int index = temp1.IndexOf("Đến từ");
+                        temp1 = temp1.Substring(index + 6, temp1.Length - 1);
+                        thongtin.Add(temp1);
+                    }  
+                  
                 }               
             }
             else { thongtin.Add("");}
