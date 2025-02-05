@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using Keys = OpenQA.Selenium.Keys;
 using DevExpress.Utils;
+using CrawFB.DTO;
 
 namespace CrawFB
 {
@@ -22,13 +23,32 @@ namespace CrawFB
         {
             InitializeComponent();
 
-
-            string linkfb = "https://www.facebook.com/tiengnoitudotaynguyen?__cft__[0]=AZXP3ubVhTWNujqbaJwugfaxv84K2bObAHYjZTnkjiUBgZ7tf_-jjtu184AFMEs6Bjvz-AhdcDMMi84gfeGzbzU7IeFr__s4P8zFWiFriGA1fCStUUs2sU7ezd0OwGK11xgTFQt529rnS8M6Mg3snmx30GLHyvmxrPKMhFuD1VPBsw&__tn__=-UC%2CP-R!%3Av-R";
-            string linkrutgon = Libary.Instance.xulylinkperson(linkfb);
-            Console.WriteLine(linkrutgon);
             
         }
-            
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (txblinkbv.Text != "")
+            {
+                ChromeOptions options = Libary.Instance.Options();
+                ChromeDriver Driver = new ChromeDriver(options);
+                List<Person> person = new List<Person>();
+                person = Libary.Instance.GetShareOnePost(Driver, txblinkbv.Text);
+                foreach (Person person2 in person)
+                {
+                    string linkfb = person2.LinkFb.ToString();
+                    List<string> thongtincn = new List<string>();
+                    if (linkfb != "")
+                    {
+                        thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb + "/about");
+                        foreach (string t in thongtincn)
+                        {
+                            MessageBox.Show("ab: "+t);
+                        }
+                    }
+                }
+                Driver.Quit();
+            }
+        }
     }
 }
