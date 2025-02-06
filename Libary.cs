@@ -37,6 +37,29 @@ namespace CrawFB
             // Pass the argument 1 to allow and 2 to block
             return option;
         }
+        public ChromeDriver khoitao(string profile)
+        {
+        ChromeOptions option = new ChromeOptions();
+        option.AddArguments("user-data-dir="+profile);
+        option.AddArgument("--disable-infobars");
+        option.AddArgument("start-maximized");
+        option.AddArgument("--disable-extensions");
+    
+        //option.AddArgument("--headless"); //chạy ngầm
+        ChromeDriver driver = new ChromeDriver(option);
+        return driver;
+        }
+    public ChromeOptions Options2 (string profile)
+        {
+        ChromeOptions option = new ChromeOptions();
+        option.AddArguments("user-data-dir=" + profile);
+        option.AddArgument("--disable-infobars");
+        option.AddArgument("start-maximized");
+        option.AddArgument("--disable-extensions");
+
+        //option.AddArgument("--headless"); //chạy ngầm
+        return option;
+        }
         public List<IWebElement> CheckAcoount(ChromeDriver driver)
         {
             List<IWebElement> element = null;
