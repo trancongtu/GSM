@@ -30,24 +30,32 @@
         {
             this.ribbon = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.barSubItem1 = new DevExpress.XtraBars.BarSubItem();
+            this.btnOnePost = new DevExpress.XtraBars.BarButtonItem();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroupfast = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupTool = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
-            this.btnOnePost = new DevExpress.XtraBars.BarButtonItem();
+            this.setup = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.btnLoginNews = new DevExpress.XtraBars.BarButtonItem();
+            this.btnProfile = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbon
             // 
+            this.ribbon.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(37);
             this.ribbon.ExpandCollapseItem.Id = 0;
             this.ribbon.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.ribbon.ExpandCollapseItem,
             this.barSubItem1,
-            this.btnOnePost});
+            this.btnOnePost,
+            this.btnLoginNews,
+            this.btnProfile});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
-            this.ribbon.MaxItemId = 3;
+            this.ribbon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ribbon.MaxItemId = 5;
             this.ribbon.Name = "ribbon";
+            this.ribbon.OptionsMenuMinWidth = 412;
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
             this.ribbon.Size = new System.Drawing.Size(1051, 193);
@@ -59,11 +67,19 @@
             this.barSubItem1.Id = 1;
             this.barSubItem1.Name = "barSubItem1";
             // 
+            // btnOnePost
+            // 
+            this.btnOnePost.Caption = "Từ 01 bài viết";
+            this.btnOnePost.Id = 2;
+            this.btnOnePost.Name = "btnOnePost";
+            this.btnOnePost.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnOnePost_ItemClick);
+            // 
             // ribbonPage1
             // 
             this.ribbonPage1.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
             this.ribbonPageGroupfast,
-            this.ribbonPageGroupTool});
+            this.ribbonPageGroupTool,
+            this.setup});
             this.ribbonPage1.Name = "ribbonPage1";
             this.ribbonPage1.Text = "GSM";
             // 
@@ -81,16 +97,29 @@
             // ribbonStatusBar
             // 
             this.ribbonStatusBar.Location = new System.Drawing.Point(0, 498);
+            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ribbonStatusBar.Name = "ribbonStatusBar";
             this.ribbonStatusBar.Ribbon = this.ribbon;
             this.ribbonStatusBar.Size = new System.Drawing.Size(1051, 30);
             // 
-            // btnOnePost
+            // setup
             // 
-            this.btnOnePost.Caption = "Từ 01 bài viết";
-            this.btnOnePost.Id = 2;
-            this.btnOnePost.Name = "btnOnePost";
-            this.btnOnePost.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnOnePost_ItemClick);
+            this.setup.ItemLinks.Add(this.btnLoginNews);
+            this.setup.ItemLinks.Add(this.btnProfile);
+            this.setup.Name = "setup";
+            this.setup.Text = "SETUP";
+            // 
+            // btnLoginNews
+            // 
+            this.btnLoginNews.Caption = "Đăng Nhập Mới";
+            this.btnLoginNews.Id = 3;
+            this.btnLoginNews.Name = "btnLoginNews";
+            // 
+            // btnProfile
+            // 
+            this.btnProfile.Caption = "Chọn Profile";
+            this.btnProfile.Id = 4;
+            this.btnProfile.Name = "btnProfile";
             // 
             // fBegin
             // 
@@ -118,5 +147,8 @@
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupTool;
         private DevExpress.XtraBars.BarSubItem barSubItem1;
         private DevExpress.XtraBars.BarButtonItem btnOnePost;
+        private DevExpress.XtraBars.BarButtonItem btnLoginNews;
+        private DevExpress.XtraBars.BarButtonItem btnProfile;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup setup;
     }
 }

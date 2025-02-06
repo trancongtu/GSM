@@ -32,21 +32,25 @@ namespace CrawFB
             {
                 ChromeOptions options = Libary.Instance.Options();
                 ChromeDriver Driver = new ChromeDriver(options);
-                List<Person> person = new List<Person>();
-                person = Libary.Instance.GetShareOnePost(Driver, txblinkbv.Text);
-                foreach (Person person2 in person)
+                Driver.Url = txblinkbv.Text;
+                IWebElement element = Driver.FindElement(By.LinkText("Bạn bè"));
+                if (element != null)
                 {
-                    string linkfb = person2.LinkFb.ToString();
-                    List<string> thongtincn = new List<string>();
-                    if (linkfb != "")
-                    {
-                        thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb + "/about");
-                        foreach (string t in thongtincn)
-                        {
-                            MessageBox.Show("ab: "+t);
-                        }
-                    }
+                    element.Click();
                 }
+                Libary.Instance.randomtime(5000, 10000);
+                IWebElement element2 = Driver.FindElement(By.LinkText("Giới thiệu"));
+                if (element2 != null)
+                {
+                    element2.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
+                IWebElement element3 = Driver.FindElement(By.LinkText("Ảnh"));
+                if (element3 != null)
+                {
+                    element3.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
                 Driver.Quit();
             }
         }

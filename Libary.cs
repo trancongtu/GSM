@@ -39,26 +39,25 @@ namespace CrawFB
         }
         public ChromeDriver khoitao(string profile)
         {
-        ChromeOptions option = new ChromeOptions();
-        option.AddArguments("user-data-dir="+profile);
-        option.AddArgument("--disable-infobars");
-        option.AddArgument("start-maximized");
-        option.AddArgument("--disable-extensions");
-    
-        //option.AddArgument("--headless"); //chạy ngầm
-        ChromeDriver driver = new ChromeDriver(option);
-        return driver;
-        }
-    public ChromeOptions Options2 (string profile)
-        {
-        ChromeOptions option = new ChromeOptions();
-        option.AddArguments("user-data-dir=" + profile);
-        option.AddArgument("--disable-infobars");
-        option.AddArgument("start-maximized");
-        option.AddArgument("--disable-extensions");
+            ChromeOptions option = new ChromeOptions();
+            option.AddArguments("user-data-dir=" + profile);
+            option.AddArgument("--disable-infobars");
+            option.AddArgument("start-maximized");
+            option.AddArgument("--disable-extensions");
 
-        //option.AddArgument("--headless"); //chạy ngầm
-        return option;
+            //option.AddArgument("--headless"); //chạy ngầm
+            ChromeDriver driver = new ChromeDriver(option);
+            return driver;
+        }
+        public ChromeOptions Options2(string profile)
+        {
+            ChromeOptions option = new ChromeOptions();
+            option.AddArguments("user-data-dir=" + profile);
+            option.AddArgument("--disable-infobars");
+            option.AddArgument("start-maximized");
+            option.AddArgument("--disable-extensions");
+            //option.AddArgument("--headless"); //chạy ngầm
+            return option;
         }
         public List<IWebElement> CheckAcoount(ChromeDriver driver)
         {
@@ -123,9 +122,10 @@ namespace CrawFB
             List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class ^= 'x1yztbdb']>div>div>div>div>div>div>div>div>div>span>div>h3>span>span>a")));
             foreach (IWebElement element in fullshare)
             {
-                string diachi = element.GetAttribute("href");              
+                string diachi = element.GetAttribute("href"); 
+                string diachishare = Libary.instance.rutgonlinkshare(diachi);
                 string linkfb = Libary.Instance.xulylinkperson(diachi);                
-                person.Add(new Person(linkfb, "", "", "", ""));
+                person.Add(new Person(diachishare,linkfb, "", "", "", ""));
             }
             return person;
         }
@@ -149,6 +149,9 @@ namespace CrawFB
             //string thongtinsongtai, thongtindentu = "";
             Driver.Url = link;
             randomtime(5000, 10000);
+            Random random = new Random();
+            int ran = random.Next(1, 4);
+            randomAction(Driver, ran);
             List<string> thongtin = new List<string>();
             List<IWebElement> element = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span")));
             randomtime(5000, 10000);
@@ -160,15 +163,15 @@ namespace CrawFB
                    if(temp1.Contains("Sống") == true)
                     {
                         thongtin.Add("songtai");
-                        int index = temp1.IndexOf("Sống tại");
-                        temp1 = temp1.Substring(index + 8, temp1.Length -1 );
+                        int index = temp1.IndexOf("\n");
+                        temp1 = temp1.Substring(index, temp1.Length - index);
                         thongtin.Add(temp1);                      
                     }    
                     if(temp1.Contains("Đến") == true)
                     {                       
                         thongtin.Add("dentu");
                         int index = temp1.IndexOf("Đến từ");
-                        temp1 = temp1.Substring(index + 6, temp1.Length - 1);
+                        temp1 = temp1.Substring(index + 6, temp1.Length - index-6);
                         thongtin.Add(temp1);
                     }  
                   
@@ -240,7 +243,52 @@ namespace CrawFB
             int time = random.Next(time1, time2);         
             Thread.Sleep(time);
         }
+        public void randomAction(ChromeDriver Driver, int t)
+        {
+            if (t == 1)
+            {
+                IWebElement element = Driver.FindElement(By.LinkText("Bạn bè"));
+                if (element != null)
+                {
+                    element.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
+            }
+            if (t == 2)
+            {
+                IWebElement element = Driver.FindElement(By.LinkText("Ảnh"));
+                if (element != null)
+                {
+                    element.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
+            }
+            if (t == 3)
+            {
+                IWebElement element = Driver.FindElement(By.LinkText("Video"));
+                if (element != null)
+                {
+                    element.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
+            }
+            if (t == 4)
+            {
+                IWebElement element = Driver.FindElement(By.LinkText("Check in"));
+                if (element != null)
+                {
+                    element.Click();
+                }
+                Libary.Instance.randomtime(5000, 10000);
+            }
 
+            IWebElement element2 = Driver.FindElement(By.LinkText("Giới thiệu"));
+            if (element2 != null)
+            {
+                element2.Click();
+            }
+            Libary.Instance.randomtime(5000, 10000);
+        }
 
     }
 }

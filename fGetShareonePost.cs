@@ -15,6 +15,7 @@ using Keys = OpenQA.Selenium.Keys;
 using DevExpress.Utils;
 using DevExpress.Utils.DPI;
 using CrawFB.DTO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CrawFB
 {
@@ -135,35 +136,31 @@ namespace CrawFB
                 int j = 1;
                 foreach (Person person2 in person)
                 {
-                    string linkfb = person2.LinkFb.ToString();
-                    Console.WriteLine(linkfb);
+                    string linkfb = person2.LinkFb.ToString();       
+                    string diachichiase = person2.DiachiShare.ToString();
                     List<string> thongtincn = new List<string>();
                     if(linkfb != "")
                     {
-                        thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb + "/about");
-                        foreach(string t in thongtincn)
+                        string songtai = "";
+                        string dentu = "";
+                        thongtincn = Libary.Instance.thongtincanhan(Driver, linkfb);
+                        if(thongtincn.Count > 0)
                         {
-                            Console.WriteLine(t);
-                        }    
-                        int sophantu = thongtincn.Count;
-                        //string songtai = thongtincn[1];
-
-                        string dentu = thongtincn[sophantu-1];
-                        /*for (int i = 0; i < thongtincn.Count; i++)
-                        {
-                            if (thongtincn[i] == "songtai")
+                            for (int i = 0; i < thongtincn.Count; i++)
                             {
-                                songtai = thongtincn[i + 1];
-                                Console.WriteLine(songtai);
-                            }
-                            if (thongtincn[i] == "dentu")
+                               
+                                if (thongtincn[i] == "songtai")
                                 {
-                                    dentu = thongtincn[i + 1];
-                                Console.WriteLine(dentu);
+                                    songtai = thongtincn[i + 1];                                   
                                 }
+                                if (thongtincn[i] == "dentu")
+                                {
+                                    dentu = thongtincn[i + 1];                                   
+                                }
+                               
+                            }                          
                         }
-                        */
-                        dgvGetShareOnePost.Rows.Add(j, "", linkfb, "", dentu);
+                        dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, dentu, songtai);
 
                     }                             
                 }
