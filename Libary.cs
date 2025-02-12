@@ -59,6 +59,79 @@ namespace CrawFB
             //option.AddArgument("--headless"); //chạy ngầm
             return option;
         }
+         public List<Post> GetPostOnePage(ChromeDriver Driver, string linkpost, string time, string soluong)
+ {
+     List<Post> post = new List<Post>();
+     if ((Driver != null) && (linkpost != ""))
+         Driver.Url = linkpost;
+         Driver.Navigate();
+     
+     {
+         int i = 0;
+         if (soluong != "")
+         {
+             int sl = Convert.ToInt32(soluong);
+             while(i<sl)
+             {
+                 Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+                 randomtime(5000, 10000);
+                 //WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
+                 List<IWebElement> fullpost = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[data-pagelet*='TimelineFeedUnit']")));
+                 foreach (IWebElement element in fullpost)
+                 {
+                     IWebElement temp = element.FindElement(By.CssSelector("a[class*='x1sur9pj xkrqix3 x1s688f']"));
+                     string idpost = temp.GetAttribute("href");
+                     idpost = rutgonlinkshare(idpost);
+                     string thoigian = temp.GetAttribute("aria-label");
+                     string contents = "";  
+                     List<IWebElement> noidung =new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'xu06os2 x1ok221b']>span")));
+                     foreach (IWebElement content in noidung) // lấy nội dung bài viết
+                     {
+                         contents = content.Text;
+                     }
+                     List<IWebElement> noidunganh = new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'x6s0dn4 x78zum5 xdt5ytf x5yr21d xl56j7k x10l6tqk x17qophe x13vifvy xh8yej3']>div>div")));
+                     if (noidunganh != null) // lấy chữ viết trong các bài có mầu
+                     {
+                         foreach (IWebElement nda in noidunganh)
+                         {
+                             contents += nda.Text;
+                         }    
+                     }                        
+                     List<IWebElement> tuongtac = new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xsyo7zv x16hj40l x10b6aqq x1yrsyyn']")));
+                     string binhluan = ""; int bl = 0; int cs = 0;
+                     string chiase = "";
+                     foreach (IWebElement temp2 in tuongtac)
+                     {
+                         if (temp2.Text.IndexOf("bình luận")  != -1) 
+                         {   binhluan = temp2.Text;
+                             int index = binhluan.IndexOf(" ");                 
+                             binhluan = binhluan.Substring(0,index);
+                             bl = Convert.ToInt32(binhluan);
+                         }
+                         if (temp2.Text.IndexOf("chia sẻ") != -1) 
+                         { 
+                             chiase  = temp2.Text;
+                             chiase = chiase.Substring(0,chiase.IndexOf(" "));
+                             cs = Convert.ToInt32(chiase);
+                         }
+                     }
+                     //string binhluan = comment.Text;
+
+                     //Console.WriteLine(idpost + " " + thoigian + " " + contents + "" +binhluan + "_" +chiase);
+                     //IWebElement temp = element.FindElement(By.CssSelector("div[class='xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a']"));
+                     // string content2 = temp.Text;
+                     //Console.WriteLine(content2);
+                     
+                     
+                     post.Add(new Post(idpost, contents, thoigian, cs,bl));
+                     i++;
+                 }
+
+             }
+         }
+     }
+     return post;
+ }
         public List<IWebElement> CheckAcoount(ChromeDriver driver)
         {
             List<IWebElement> element = null;
