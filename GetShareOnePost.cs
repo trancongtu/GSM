@@ -7,21 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DevExpress.XtraBars;
+using GSM.DAO;
 
 namespace GSM
 {
-    public partial class fBegin : DevExpress.XtraBars.Ribbon.RibbonForm
+    public partial class GetShareOnePost : Form
     {
-        public fBegin()
+        public GetShareOnePost()
         {
             InitializeComponent();
         }
 
-        private void btnLogin_ItemClick(object sender, ItemClickEventArgs e)
+        private void btnShearch_Click(object sender, EventArgs e)
         {
-            Flogin f =new Flogin();
-            f.ShowDialog();
+            string profile = "D://CODE/Project/GSM/ProfileTCT";
+            Libary.Instance.khoitao(profile);
         }
     }
 }

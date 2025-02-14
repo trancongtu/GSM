@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.Skins;
+using DevExpress.UserSkins;
 
-namespace CrawFB
+namespace GSM
 {
     internal static class Program
     {
@@ -16,7 +17,7 @@ namespace CrawFB
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new fGetShareonePost());
+            Application.Run(new fPostOnePage());
         }
     }
 }

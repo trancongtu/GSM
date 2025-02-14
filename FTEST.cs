@@ -7,21 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DevExpress.XtraBars;
+using GSM.DAO;
+using OpenQA.Selenium.Chrome;
 
 namespace GSM
 {
-    public partial class fBegin : DevExpress.XtraBars.Ribbon.RibbonForm
+    public partial class FTEST : Form
     {
-        public fBegin()
+        public FTEST()
         {
             InitializeComponent();
         }
 
-        private void btnLogin_ItemClick(object sender, ItemClickEventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            Flogin f =new Flogin();
-            f.ShowDialog();
+          
+
         }
     }
 }
