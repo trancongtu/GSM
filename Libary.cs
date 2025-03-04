@@ -8,9 +8,12 @@ using CrawFB.DTO;
 using DevExpress.Data.Helpers;
 using DevExpress.Data.NetCompatibility.Extensions;
 using DevExpress.Skins;
+using DevExpress.Utils;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools.V130.Page;
+using OpenQA.Selenium.Interactions;
+using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace CrawFB
@@ -29,7 +32,7 @@ namespace CrawFB
         public ChromeOptions Options()
         {
             ChromeOptions option = new ChromeOptions();
-            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileChromeGSM");
+            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileTCT");
             //option.AddArgument("--headless"); //chay ngam hay k
             option.AddArgument("--disable-infobars");
             option.AddArgument("start-maximized");
@@ -59,79 +62,6 @@ namespace CrawFB
             //option.AddArgument("--headless"); //chạy ngầm
             return option;
         }
-         public List<Post> GetPostOnePage(ChromeDriver Driver, string linkpost, string time, string soluong)
- {
-     List<Post> post = new List<Post>();
-     if ((Driver != null) && (linkpost != ""))
-         Driver.Url = linkpost;
-         Driver.Navigate();
-     
-     {
-         int i = 0;
-         if (soluong != "")
-         {
-             int sl = Convert.ToInt32(soluong);
-             while(i<sl)
-             {
-                 Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
-                 randomtime(5000, 10000);
-                 //WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
-                 List<IWebElement> fullpost = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[data-pagelet*='TimelineFeedUnit']")));
-                 foreach (IWebElement element in fullpost)
-                 {
-                     IWebElement temp = element.FindElement(By.CssSelector("a[class*='x1sur9pj xkrqix3 x1s688f']"));
-                     string idpost = temp.GetAttribute("href");
-                     idpost = rutgonlinkshare(idpost);
-                     string thoigian = temp.GetAttribute("aria-label");
-                     string contents = "";  
-                     List<IWebElement> noidung =new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'xu06os2 x1ok221b']>span")));
-                     foreach (IWebElement content in noidung) // lấy nội dung bài viết
-                     {
-                         contents = content.Text;
-                     }
-                     List<IWebElement> noidunganh = new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'x6s0dn4 x78zum5 xdt5ytf x5yr21d xl56j7k x10l6tqk x17qophe x13vifvy xh8yej3']>div>div")));
-                     if (noidunganh != null) // lấy chữ viết trong các bài có mầu
-                     {
-                         foreach (IWebElement nda in noidunganh)
-                         {
-                             contents += nda.Text;
-                         }    
-                     }                        
-                     List<IWebElement> tuongtac = new List<IWebElement>(element.FindElements(By.CssSelector("div[class = 'x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xsyo7zv x16hj40l x10b6aqq x1yrsyyn']")));
-                     string binhluan = ""; int bl = 0; int cs = 0;
-                     string chiase = "";
-                     foreach (IWebElement temp2 in tuongtac)
-                     {
-                         if (temp2.Text.IndexOf("bình luận")  != -1) 
-                         {   binhluan = temp2.Text;
-                             int index = binhluan.IndexOf(" ");                 
-                             binhluan = binhluan.Substring(0,index);
-                             bl = Convert.ToInt32(binhluan);
-                         }
-                         if (temp2.Text.IndexOf("chia sẻ") != -1) 
-                         { 
-                             chiase  = temp2.Text;
-                             chiase = chiase.Substring(0,chiase.IndexOf(" "));
-                             cs = Convert.ToInt32(chiase);
-                         }
-                     }
-                     //string binhluan = comment.Text;
-
-                     //Console.WriteLine(idpost + " " + thoigian + " " + contents + "" +binhluan + "_" +chiase);
-                     //IWebElement temp = element.FindElement(By.CssSelector("div[class='xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a']"));
-                     // string content2 = temp.Text;
-                     //Console.WriteLine(content2);
-                     
-                     
-                     post.Add(new Post(idpost, contents, thoigian, cs,bl));
-                     i++;
-                 }
-
-             }
-         }
-     }
-     return post;
- }
         public List<IWebElement> CheckAcoount(ChromeDriver driver)
         {
             List<IWebElement> element = null;
@@ -142,26 +72,37 @@ namespace CrawFB
             }
             return element;
         }
-        public List<Person> GetShareOnePost(ChromeDriver Driver, string linkpost)
+        public List<PersonShare> GetShareOnePost(ChromeDriver Driver, string linkpost)
         {
-            List<Person> person = new List<Person>();
+            List<PersonShare> personshare = new List<PersonShare>();
             Driver.Url = linkpost;
             string sumshare = "";
             Libary.Instance.randomtime(6000, 10000);
-            Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
-            List<IWebElement> temp = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x1sur9pj xkrqix3']")));
-            sumshare = temp[temp.Count - 1].Text;
+            List<IWebElement> btnshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']")));
+            foreach (IWebElement btn in btnshare)
+            {
+                //Console.WriteLine(btn.Text);
+                 sumshare = btn.Text;
+                if (sumshare.IndexOf("lượt chia sẻ") != -1)
+                {
+                    btn.Click();
+                }
+            }
+            Libary.Instance.randomtime(6000, 10000);
+            //sumshare = temp[temp.Count - 1].Text;   
+            Console.WriteLine(sumshare);
             if (sumshare != "")
             {
                 int index = sumshare.IndexOf(" ");
                 sumshare = sumshare.Substring(0, index);
+              
             }
-            List<IWebElement> share = new List<IWebElement>(Driver.FindElements(By.XPath("//span[contains(@class,'x1vvkbs x1sur9pj xkrqix3')]")));
+           /* List<IWebElement> share = new List<IWebElement>(Driver.FindElements(By.XPath("//span[contains(@class,'x1vvkbs x1sur9pj xkrqix3 x1sur9pj')]")));
             if (share.Count > 0)
             {
                 share[share.Count - 1].Click();
                 Thread.Sleep(10000);
-            }
+            }*/
             int a = Convert.ToInt32(sumshare);
             if (a > 10)
             {
@@ -195,12 +136,14 @@ namespace CrawFB
             List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class ^= 'x1yztbdb']>div>div>div>div>div>div>div>div>div>span>div>h3>span>span>a")));
             foreach (IWebElement element in fullshare)
             {
-                string diachi = element.GetAttribute("href"); 
-                string diachishare = Libary.instance.rutgonlinkshare(diachi);
-                string linkfb = Libary.Instance.xulylinkperson(diachi);                
-                person.Add(new Person(diachishare,linkfb, "", "", "", ""));
+                string Href = element.GetAttribute("href"); 
+                Console.WriteLine(Href);
+                string diachishare = Libary.instance.rutgonlinkshare(Href);
+                string linkfb = Libary.Instance.HrefToLinkFb(Href);    
+                Console.WriteLine(linkfb);
+                personshare.Add(new PersonShare(diachishare,linkfb));
             }
-            return person;
+            return personshare;
         }
         public string SumShare(ChromeDriver Driver, string linkbaiviet)
         {
@@ -253,28 +196,53 @@ namespace CrawFB
             else { thongtin.Add("");}
             return thongtin;
         }
-        public string xululinkshare(string link)
+        public List<Person> ThongtinPerson(ChromeDriver Driver, string link)
         {
-            string ketqua = "";
-            int i = link.IndexOf("&id");          
-            int j = link.IndexOf("&__");           
-            if (i != -1 && j != -1)
+            List<Person> person = new List<Person>();
+            Driver.Url = link;
+            randomtime(5000, 10000);
+            RandomActiconNew(Driver);
+            string songtai = "";
+            string dentu = "";
+            string hocvan = "";
+            string tenfb = "";
+            List<IWebElement> element = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a']>span")));
+            randomtime(5000, 10000);
+            if (element != null)
             {
-                link = link.Substring(i + 4, j - i - 4);
-                ketqua = "https://Fb.com/" + link;
-
-            }           
-            else
-            {
-                int index2 = link.IndexOf("/posts/");
-                if (index2 != -1)
+                foreach (IWebElement element2 in element)
                 {
-                    link = link.Substring(0, index2);
-                    ketqua = link.Replace("https://www.facebook.com/", "https://Fb.com/");
+                    string temp1 = element2.Text;
+                    if (temp1.Contains("Sống") == true)
+                    {                    
+                        int index = temp1.IndexOf("\n");
+                        temp1 = temp1.Substring(index, temp1.Length - index);
+                        songtai = temp1;
+                    }
+                    if (temp1.Contains("Đến") == true)
+                    {
+                       
+                        int index = temp1.IndexOf("Đến từ");
+                        temp1 = temp1.Substring(index + 6, temp1.Length - index - 6);
+                        dentu = temp1;
+                    }
                 }
-            }    
-            return ketqua;
+               
+            }
+            List<IWebElement> thongtinkhac = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'xzsf02u x6prxxf xvq8zen x126k92a x12nagc']")));
+            foreach (IWebElement tt in thongtinkhac)
+            {
+                hocvan += tt.Text.ToString();
+            }
+            List<IWebElement> tenfacebook = new List<IWebElement>(Driver.FindElements(By.CssSelector("h1[class = 'html-h1 xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1vvkbs x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz']")));
+            foreach (IWebElement ten in tenfacebook)
+            {
+               tenfb += ten.Text.ToString();
+            }
+            person.Add(new Person(-1, link, tenfb, dentu, songtai, hocvan, ""));
+            return person;
         }
+        
             public string xulylinkperson(string link)
             {
             string ketqua = "";
@@ -310,50 +278,109 @@ namespace CrawFB
             return ketqua;
 
         }
+        public string HrefToLinkFb(string link)
+        {
+            string linkshare = "";
+            string idfb = "";
+            string linkfb = "";
+            int i = link.IndexOf("&id=");
+            int j = link.IndexOf("&__");
+            int k = link.IndexOf("?__");
+            int t = link.IndexOf("/posts/");       
+            if ((i != -1) && (j != -1))
+            {
+                linkshare = link.Substring(0, j);
+                idfb = link.Substring(i + 4, j - i - 4);
+                linkfb = "https://Fb.com/" + idfb;
+            }
+            if ((k != -1) && (t != -1))
+            {
+                linkshare = link.Substring(0, k);
+                linkfb = link.Substring(0, t);
+            }           
+            return linkfb;
+        }
+        public string HrefToIdFb(string link)
+        {
+            string linkshare = "";
+            string idfb = "";
+            string linkfb = "";
+            int i = link.IndexOf("&id=");
+            int j = link.IndexOf("&__");
+            int k = link.IndexOf("?__");
+            int t = link.IndexOf("/posts/");
+            if ((i != -1) && (j != -1))
+            {
+                linkshare = link.Substring(0, j);
+                idfb = link.Substring(i + 4, j - i - 4);
+                linkfb = "https://Fb.com/" + idfb;
+            }
+            if ((k != -1) && (t != -1))
+            {
+                linkshare = link.Substring(0, k);
+                linkfb = link.Substring(0, t);
+            }
+            return idfb;
+        }
         public void randomtime (int time1,  int time2)
         {
             Random random = new Random();
             int time = random.Next(time1, time2);         
             Thread.Sleep(time);
         }
+        bool CheckPerson (ChromeDriver driver)
+        {
+            List<IWebElement> list = new List<IWebElement>(driver.FindElements(By.CssSelector("a[class = 'x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1sur9pj xkrqix3 xi81zsa x1s688f']")));
+            foreach (IWebElement element in list)
+            {
+                if(element.Text.ToString().Contains("người theo dõi") == true) return false;
+            }
+
+            return true;
+        }
         public void randomAction(ChromeDriver Driver, int t)
         {
-            if (t == 1)
+            bool test = CheckPerson(Driver);
+            if (test == true)
             {
-                IWebElement element = Driver.FindElement(By.LinkText("Bạn bè"));
-                if (element != null)
+                if (t == 1)
                 {
-                    element.Click();
+                    IWebElement element = Driver.FindElement(By.LinkText("Bạn bè"));
+                    if (element != null)
+                    {
+                        element.Click();
+                    }
+                    Libary.Instance.randomtime(5000, 10000);
                 }
-                Libary.Instance.randomtime(5000, 10000);
-            }
-            if (t == 2)
-            {
-                IWebElement element = Driver.FindElement(By.LinkText("Ảnh"));
-                if (element != null)
+                if (t == 2)
                 {
-                    element.Click();
+                    IWebElement element = Driver.FindElement(By.LinkText("Ảnh"));
+                    if (element != null)
+                    {
+                        element.Click();
+                    }
+                    Libary.Instance.randomtime(5000, 10000);
                 }
-                Libary.Instance.randomtime(5000, 10000);
-            }
-            if (t == 3)
-            {
-                IWebElement element = Driver.FindElement(By.LinkText("Video"));
-                if (element != null)
+                if (t == 3)
                 {
-                    element.Click();
+                    IWebElement element = Driver.FindElement(By.LinkText("Video"));
+                    if (element != null)
+                    {
+                        element.Click();
+                    }
+                    Libary.Instance.randomtime(5000, 10000);
                 }
-                Libary.Instance.randomtime(5000, 10000);
-            }
-            if (t == 4)
-            {
-                IWebElement element = Driver.FindElement(By.LinkText("Check in"));
-                if (element != null)
+                if (t == 4)
                 {
-                    element.Click();
+                    IWebElement element = Driver.FindElement(By.LinkText("Check in"));
+                    if (element != null)
+                    {
+                        element.Click();
+                    }
+                    Libary.Instance.randomtime(5000, 10000);
                 }
-                Libary.Instance.randomtime(5000, 10000);
             }
+           
 
             IWebElement element2 = Driver.FindElement(By.LinkText("Giới thiệu"));
             if (element2 != null)
@@ -362,6 +389,169 @@ namespace CrawFB
             }
             Libary.Instance.randomtime(5000, 10000);
         }
+        public void RandomActiconNew(ChromeDriver Driver)
+        {
+            Random ran = new Random();
+            int tam = ran.Next(2, 5);
+            Console.WriteLine(tam);
+            List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("a[class = 'x1i10hfl xe8uvvx xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x87ps6o x1lku1pv x1a2a7pz xjyslct xjbqb8w x18o3ruo x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1heor9g x1ypdohk xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x16tdsg8 x1hl2dhg x1vjfegm x3nfvp2 xrbpyxo x1itg65n x16dsc37']")));
 
+            if (tam < fullshare.Count)
+            {
+                fullshare[tam].Click();
+                Libary.Instance.randomtime(3000, 5000);
+            }
+            fullshare[1].Click();
+            IWebElement element2 = Driver.FindElement(By.LinkText("Giới thiệu"));
+            if (element2 != null)
+            {
+                element2.Click();
+            }
+            Libary.Instance.randomtime(5000, 10000);
+        }
+        public void keoluotshare (ChromeDriver Driver)
+        {
+            IWebElement element2 = Driver.FindElement(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']"));
+            int last_count = 0;
+            int new_count = 0;
+            do
+            {
+                Libary.Instance.randomtime(6000, 10000);
+                //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
+                last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                Console.WriteLine(last_count);
+
+                for (int i = 0; i < 2; i++)
+                {
+                    element2.SendKeys(Keys.End);
+                    element2.SendKeys(Keys.Up);
+                    element2.SendKeys(Keys.Up);
+                    element2.SendKeys(Keys.Up);
+                    element2.SendKeys(Keys.Down);
+                    element2.SendKeys(Keys.Down);
+                    element2.SendKeys(Keys.Down);
+                    Libary.Instance.randomtime(6000, 10000);
+                }
+
+                new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                Console.WriteLine(new_count);
+            }
+            while (last_count != new_count);
+        }
+        public string xulyKshare(string link)
+        {
+            string ketqua = "";
+            int phay = link.IndexOf(",");
+            int nghin = link.IndexOf("K");           
+            if (nghin != -1)
+            {
+                for (int i = 0; i < link.Length; i++)
+                {
+                    if (link[i] != ',' && link[i] != 'K')
+                    {
+                        ketqua += link[i];
+                    }
+                }
+                if (phay != -1)
+                {
+                    ketqua = ketqua + "00";
+                }
+                else ketqua = ketqua + "000";
+            }
+            else ketqua = link;
+            return ketqua;
+        }
+        public List<PersonShare> GetShareOnePage(ChromeDriver Driver, string linkpage, int sobai)
+        {
+            List<PersonShare> personshares = new List<PersonShare>();
+            Actions action = new Actions(Driver);
+            Driver.Url = linkpage;
+            int dem = 1; 
+            Libary.Instance.randomtime(6000, 10000);
+            while (dem < sobai)
+            {
+
+                List<IWebElement> elementshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class = 'x9f619 x1ja2u2z x78zum5 x2lah0s x1n2onr6 x1qughib x1qjc9v5 xozqiw3 x1q0g3np xykv574 xbmpl8g x4cne27 xifccgj']>div:nth-of-type(3)>span>div>div")));
+                foreach (IWebElement element in elementshare)
+                {
+                    IWebElement sumshare = element.FindElement(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']"));
+                    //Console.WriteLine("tổng share: " + sumshare.Text);
+                    int SumShare = Convert.ToInt32(sumshare.Text);
+                    IWebElement buttonshare = element.FindElement(By.CssSelector("div[class = 'x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xg83lxy x1h0ha7o x10b6aqq x1yrsyyn']"));
+                    action.MoveToElement(buttonshare).Build().Perform();
+                    action.Click(buttonshare).Build().Perform();
+                    //buttonshare.Click();
+                    randomtime(3000, 7000);
+                    if (SumShare > 10)
+                    {
+                        IWebElement element2 = Driver.FindElement(By.CssSelector("div[class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']"));
+                        int last_count = 0;
+                        int new_count = 0;
+                        do
+                        {
+                            Libary.Instance.randomtime(6000, 10000);
+                            //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
+                            last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                            //Console.WriteLine("count cuối: " + last_count);
+
+                            for (int i = 0; i < 2; i++)
+                            {
+                                element2.SendKeys(Keys.End);
+                                element2.SendKeys(Keys.Up);
+                                element2.SendKeys(Keys.Up);
+                                element2.SendKeys(Keys.Up);
+                                element2.SendKeys(Keys.Down);
+                                element2.SendKeys(Keys.Down);
+                                element2.SendKeys(Keys.Down);
+                                Libary.Instance.randomtime(6000, 10000);
+                            }
+
+                            new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
+                            //Console.WriteLine("count cu", +new_count);
+                        }
+                        while (last_count != new_count);
+                    }
+
+                    List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class ^= 'x1yztbdb']>div>div>div>div>div>div>div>div>div>span>div>h3>span>span>a")));
+                    foreach (IWebElement element3 in fullshare)
+                    {
+                        string link = element3.GetAttribute("href");
+                        Console.WriteLine(link);
+                        string linkshare = "";
+                        string idfb = "";
+                        string linkfb = "";
+                        int i = link.IndexOf("&id=");
+                        int j = link.IndexOf("&__");
+                        int k = link.IndexOf("?__");
+                        int t = link.IndexOf("/posts/");
+                        if ((i != -1) && (j != -1))
+                        {
+                            linkshare = link.Substring(0, j);
+                            idfb = link.Substring(i + 4, j - i - 4);
+                            linkfb = "https://Fb.com/" + idfb;
+                        }
+                        if ((k != -1) && (t != -1))
+                        {
+                            linkshare = link.Substring(0, k);
+                            linkfb = link.Substring(0, t);
+                        }
+                        Console.WriteLine(linkfb);
+                        // string diachishare = list[0].ToString();
+                        // string linkfb = list[1].ToString();
+                        // string idfb = list[2].ToString();
+
+                        personshares.Add(new PersonShare(linkshare, linkfb));
+
+                    }
+                    IWebElement buttonclose = Driver.FindElement(By.CssSelector("div[class = 'x1i10hfl xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x6s0dn4 xzolkzo x12go9s9 x1rnf11y xprq8jg x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 xc9qbxq x14qfxbe x1qhmfi1']"));
+                    buttonclose.Click();
+                    dem++;
+                    Console.WriteLine(dem);
+                }
+                Driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+                Thread.Sleep(10000);
+            }
+            return personshares;
+        }
     }
 }
