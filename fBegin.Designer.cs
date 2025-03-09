@@ -1,4 +1,4 @@
-﻿namespace GSM
+﻿namespace CrawFB
 {
     partial class fBegin
     {
@@ -28,104 +28,121 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fBegin));
             this.ribbon = new DevExpress.XtraBars.Ribbon.RibbonControl();
-            this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
-            this.btnLogin = new DevExpress.XtraBars.BarButtonItem();
+            this.barSubItem1 = new DevExpress.XtraBars.BarSubItem();
+            this.btnOnePost = new DevExpress.XtraBars.BarButtonItem();
+            this.btnLoginNews = new DevExpress.XtraBars.BarButtonItem();
             this.btnProfile = new DevExpress.XtraBars.BarButtonItem();
-            this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.btnShareOnePost = new DevExpress.XtraBars.BarButtonItem();
-            this.btnShareOnePage = new DevExpress.XtraBars.BarButtonItem();
+            this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
+            this.ribbonPageGroupfast = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonPageGroupTool = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.setup = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
+            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.database = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbon
             // 
+            this.ribbon.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(37);
             this.ribbon.ExpandCollapseItem.Id = 0;
             this.ribbon.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.ribbon.ExpandCollapseItem,
-            this.ribbon.SearchEditItem,
-            this.btnLogin,
+            this.barSubItem1,
+            this.btnOnePost,
+            this.btnLoginNews,
             this.btnProfile,
-            this.btnShareOnePost,
-            this.btnShareOnePage});
+            this.database});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
-            this.ribbon.MaxItemId = 5;
+            this.ribbon.Margin = new System.Windows.Forms.Padding(4);
+            this.ribbon.MaxItemId = 6;
             this.ribbon.Name = "ribbon";
+            this.ribbon.OptionsMenuMinWidth = 412;
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
-            this.ribbon.Size = new System.Drawing.Size(995, 158);
+            this.ribbon.Size = new System.Drawing.Size(1051, 193);
             this.ribbon.StatusBar = this.ribbonStatusBar;
+            // 
+            // barSubItem1
+            // 
+            this.barSubItem1.Caption = "Từ 01 bài viết";
+            this.barSubItem1.Id = 1;
+            this.barSubItem1.Name = "barSubItem1";
+            // 
+            // btnOnePost
+            // 
+            this.btnOnePost.Caption = "Từ 01 bài viết";
+            this.btnOnePost.Id = 2;
+            this.btnOnePost.Name = "btnOnePost";
+            this.btnOnePost.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnOnePost_ItemClick);
+            // 
+            // btnLoginNews
+            // 
+            this.btnLoginNews.Caption = "Đăng Nhập Mới";
+            this.btnLoginNews.Id = 3;
+            this.btnLoginNews.Name = "btnLoginNews";
+            // 
+            // btnProfile
+            // 
+            this.btnProfile.Caption = "Chọn Profile";
+            this.btnProfile.Id = 4;
+            this.btnProfile.Name = "btnProfile";
             // 
             // ribbonPage1
             // 
             this.ribbonPage1.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonPageGroup1,
-            this.ribbonPageGroup2});
+            this.ribbonPageGroupfast,
+            this.ribbonPageGroupTool,
+            this.setup,
+            this.ribbonPageGroup1});
             this.ribbonPage1.Name = "ribbonPage1";
-            this.ribbonPage1.Text = "ribbonPage1";
+            this.ribbonPage1.Text = "GSM";
             // 
-            // ribbonPageGroup1
+            // ribbonPageGroupfast
             // 
-            this.ribbonPageGroup1.ItemLinks.Add(this.btnLogin);
-            this.ribbonPageGroup1.ItemLinks.Add(this.btnProfile);
-            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
-            this.ribbonPageGroup1.Text = "SETUP";
+            this.ribbonPageGroupfast.Name = "ribbonPageGroupfast";
+            this.ribbonPageGroupfast.Text = "Giám sát mạng nhanh";
+            // 
+            // ribbonPageGroupTool
+            // 
+            this.ribbonPageGroupTool.ItemLinks.Add(this.btnOnePost);
+            this.ribbonPageGroupTool.Name = "ribbonPageGroupTool";
+            this.ribbonPageGroupTool.Text = "THỐNG KÊ SHARE";
+            // 
+            // setup
+            // 
+            this.setup.ItemLinks.Add(this.btnLoginNews);
+            this.setup.ItemLinks.Add(this.btnProfile);
+            this.setup.Name = "setup";
+            this.setup.Text = "SETUP";
             // 
             // ribbonStatusBar
             // 
-            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 519);
+            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 498);
+            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
             this.ribbonStatusBar.Name = "ribbonStatusBar";
             this.ribbonStatusBar.Ribbon = this.ribbon;
-            this.ribbonStatusBar.Size = new System.Drawing.Size(995, 24);
+            this.ribbonStatusBar.Size = new System.Drawing.Size(1051, 30);
             // 
-            // btnLogin
+            // ribbonPageGroup1
             // 
-            this.btnLogin.Caption = "Đăng Nhập";
-            this.btnLogin.Id = 1;
-            this.btnLogin.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("btnLogin.ImageOptions.Image")));
-            this.btnLogin.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("btnLogin.ImageOptions.LargeImage")));
-            this.btnLogin.Name = "btnLogin";
-            this.btnLogin.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnLogin_ItemClick);
+            this.ribbonPageGroup1.ItemLinks.Add(this.database);
+            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
+            this.ribbonPageGroup1.Text = "ribbonPageGroup1";
             // 
-            // btnProfile
+            // database
             // 
-            this.btnProfile.Caption = "Profile";
-            this.btnProfile.Id = 2;
-            this.btnProfile.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.ImageOptions.Image")));
-            this.btnProfile.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.ImageOptions.LargeImage")));
-            this.btnProfile.Name = "btnProfile";
-            // 
-            // ribbonPageGroup2
-            // 
-            this.ribbonPageGroup2.ItemLinks.Add(this.btnShareOnePost);
-            this.ribbonPageGroup2.ItemLinks.Add(this.btnShareOnePage);
-            this.ribbonPageGroup2.Name = "ribbonPageGroup2";
-            this.ribbonPageGroup2.Text = "Thống Kê Share";
-            // 
-            // btnShareOnePost
-            // 
-            this.btnShareOnePost.Caption = "Từ Một Bài Viết";
-            this.btnShareOnePost.Id = 3;
-            this.btnShareOnePost.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.ImageOptions.Image1")));
-            this.btnShareOnePost.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.ImageOptions.LargeImage1")));
-            this.btnShareOnePost.Name = "btnShareOnePost";
-            // 
-            // btnShareOnePage
-            // 
-            this.btnShareOnePage.Caption = "Từ Một Trang";
-            this.btnShareOnePage.Id = 4;
-            this.btnShareOnePage.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("btnShareOnePage.ImageOptions.Image")));
-            this.btnShareOnePage.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("btnShareOnePage.ImageOptions.LargeImage")));
-            this.btnShareOnePage.Name = "btnShareOnePage";
+            this.database.Caption = "DataPerson";
+            this.database.Id = 5;
+            this.database.Name = "database";
+            this.database.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.database_ItemClick);
             // 
             // fBegin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(995, 543);
+            this.ClientSize = new System.Drawing.Size(1051, 528);
             this.Controls.Add(this.ribbonStatusBar);
             this.Controls.Add(this.ribbon);
             this.Name = "fBegin";
@@ -142,12 +159,15 @@
 
         private DevExpress.XtraBars.Ribbon.RibbonControl ribbon;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage1;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupfast;
         private DevExpress.XtraBars.Ribbon.RibbonStatusBar ribbonStatusBar;
-        private DevExpress.XtraBars.BarButtonItem btnLogin;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupTool;
+        private DevExpress.XtraBars.BarSubItem barSubItem1;
+        private DevExpress.XtraBars.BarButtonItem btnOnePost;
+        private DevExpress.XtraBars.BarButtonItem btnLoginNews;
         private DevExpress.XtraBars.BarButtonItem btnProfile;
-        private DevExpress.XtraBars.BarButtonItem btnShareOnePost;
-        private DevExpress.XtraBars.BarButtonItem btnShareOnePage;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup setup;
+        private DevExpress.XtraBars.BarButtonItem database;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
     }
 }

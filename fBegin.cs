@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.XtraBars;
 
-namespace GSM
+namespace CrawFB
 {
     public partial class fBegin : DevExpress.XtraBars.Ribbon.RibbonForm
     {
@@ -18,9 +18,15 @@ namespace GSM
             InitializeComponent();
         }
 
-        private void btnLogin_ItemClick(object sender, ItemClickEventArgs e)
+        private void btnOnePost_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Flogin f =new Flogin();
+            fGetShareonePost f = new fGetShareonePost();
+            f.Show();
+        }
+
+        private void database_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            FDatabasePerson f = new FDatabasePerson();
             f.ShowDialog();
         }
     }

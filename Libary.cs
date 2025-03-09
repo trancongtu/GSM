@@ -32,7 +32,7 @@ namespace CrawFB
         public ChromeOptions Options()
         {
             ChromeOptions option = new ChromeOptions();
-            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileTCT");
+            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileTCT9.3.2025");
             //option.AddArgument("--headless"); //chay ngam hay k
             option.AddArgument("--disable-infobars");
             option.AddArgument("start-maximized");
@@ -72,79 +72,7 @@ namespace CrawFB
             }
             return element;
         }
-        public List<PersonShare> GetShareOnePost(ChromeDriver Driver, string linkpost)
-        {
-            List<PersonShare> personshare = new List<PersonShare>();
-            Driver.Url = linkpost;
-            string sumshare = "";
-            Libary.Instance.randomtime(6000, 10000);
-            List<IWebElement> btnshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']")));
-            foreach (IWebElement btn in btnshare)
-            {
-                //Console.WriteLine(btn.Text);
-                 sumshare = btn.Text;
-                if (sumshare.IndexOf("lượt chia sẻ") != -1)
-                {
-                    btn.Click();
-                }
-            }
-            Libary.Instance.randomtime(6000, 10000);
-            //sumshare = temp[temp.Count - 1].Text;   
-            Console.WriteLine(sumshare);
-            if (sumshare != "")
-            {
-                int index = sumshare.IndexOf(" ");
-                sumshare = sumshare.Substring(0, index);
-              
-            }
-           /* List<IWebElement> share = new List<IWebElement>(Driver.FindElements(By.XPath("//span[contains(@class,'x1vvkbs x1sur9pj xkrqix3 x1sur9pj')]")));
-            if (share.Count > 0)
-            {
-                share[share.Count - 1].Click();
-                Thread.Sleep(10000);
-            }*/
-            int a = Convert.ToInt32(sumshare);
-            if (a > 10)
-            {
-                IWebElement element2 = Driver.FindElement(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']"));
-                int last_count = 0;
-                int new_count = 0;
-                do
-                {
-                    Libary.Instance.randomtime(6000, 10000);
-                    //last_count = Driver.FindElements(By.XPath("//div[@class = 'xb57i2i x1q594ok x5lxg6s xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x78zum5 x179dxpb']")).Count();
-                    last_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
-                    Console.WriteLine(last_count);
 
-                    for (int i = 0; i < 2; i++)
-                    {
-                        element2.SendKeys(Keys.End);
-                        element2.SendKeys(Keys.Up);
-                        element2.SendKeys(Keys.Up);
-                        element2.SendKeys(Keys.Up);
-                        element2.SendKeys(Keys.Down);
-                        element2.SendKeys(Keys.Down);
-                        element2.SendKeys(Keys.Down);
-                        Libary.Instance.randomtime(6000, 10000);
-                    }
-
-                    new_count = Driver.FindElements(By.CssSelector("div[class = 'x1yztbdb']")).Count();
-                    Console.WriteLine(new_count);
-                }
-                while (last_count != new_count);
-            }
-            List<IWebElement> fullshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("div[class ^= 'x1yztbdb']>div>div>div>div>div>div>div>div>div>span>div>h3>span>span>a")));
-            foreach (IWebElement element in fullshare)
-            {
-                string Href = element.GetAttribute("href"); 
-                Console.WriteLine(Href);
-                string diachishare = Libary.instance.rutgonlinkshare(Href);
-                string linkfb = Libary.Instance.HrefToLinkFb(Href);    
-                Console.WriteLine(linkfb);
-                personshare.Add(new PersonShare(diachishare,linkfb));
-            }
-            return personshare;
-        }
         public string SumShare(ChromeDriver Driver, string linkbaiviet)
         {
             string sumshare = "";
@@ -303,23 +231,28 @@ namespace CrawFB
         public string HrefToIdFb(string link)
         {
             string linkshare = "";
-            string idfb = "";
-            string linkfb = "";
+            string idfb = "";   
             int i = link.IndexOf("&id=");
             int j = link.IndexOf("&__");
-            int k = link.IndexOf("?__");
-            int t = link.IndexOf("/posts/");
             if ((i != -1) && (j != -1))
             {
                 linkshare = link.Substring(0, j);
                 idfb = link.Substring(i + 4, j - i - 4);
-                linkfb = "https://Fb.com/" + idfb;
-            }
-            if ((k != -1) && (t != -1))
+            }         
+            return idfb;
+        }
+        public string HrefShareGroupsToIdFb(string link)
+        {
+           
+            string idfb = "";
+           
+            int i = link.IndexOf("/groups/");
+            int k = link.IndexOf("?__");
+            int t = link.IndexOf("/user/");
+            if ((i != -1) && (k != -1) && (t != -1))
             {
-                linkshare = link.Substring(0, k);
-                linkfb = link.Substring(0, t);
-            }
+                idfb = link.Substring(t + 6, k - t - 7);
+            }        
             return idfb;
         }
         public void randomtime (int time1,  int time2)
@@ -540,7 +473,7 @@ namespace CrawFB
                         // string linkfb = list[1].ToString();
                         // string idfb = list[2].ToString();
 
-                        personshares.Add(new PersonShare(linkshare, linkfb));
+                        //personshares.Add(new PersonShare(linkshare, linkfb));
 
                     }
                     IWebElement buttonclose = Driver.FindElement(By.CssSelector("div[class = 'x1i10hfl xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x6s0dn4 xzolkzo x12go9s9 x1rnf11y xprq8jg x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 xc9qbxq x14qfxbe x1qhmfi1']"));
