@@ -197,18 +197,26 @@ namespace CrawFB
         {
             string ketqua = "";
 
-            int index2 = link.IndexOf("?");
-            if (index2 != -1)
+            int k = link.IndexOf("?__");
+            int t = link.IndexOf("/posts/");
+            int i = link.IndexOf("&id=");
+            int j = link.IndexOf("&__");
+            if ((i != -1) && (j != -1))
             {
-                link = link.Substring(0, index2);
+                link = link.Substring(0, j);
                 ketqua = link.Replace("https://www.facebook.com/", "https://Fb.com/");
             }
-            return ketqua;
+            if ((k != -1) && (t != -1))
+            {
+                ketqua = link.Substring(0, k);
+                ketqua = link.Replace("https://www.facebook.com/", "https://Fb.com/");
+            }    
+                return ketqua;
 
         }
         public string HrefToLinkFb(string link)
         {
-            string linkshare = "";
+           
             string idfb = "";
             string linkfb = "";
             int i = link.IndexOf("&id=");
@@ -216,14 +224,13 @@ namespace CrawFB
             int k = link.IndexOf("?__");
             int t = link.IndexOf("/posts/");       
             if ((i != -1) && (j != -1))
-            {
-                linkshare = link.Substring(0, j);
+            {      
                 idfb = link.Substring(i + 4, j - i - 4);
                 linkfb = "https://Fb.com/" + idfb;
             }
             if ((k != -1) && (t != -1))
             {
-                linkshare = link.Substring(0, k);
+                
                 linkfb = link.Substring(0, t);
             }           
             return linkfb;

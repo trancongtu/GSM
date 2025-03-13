@@ -18,6 +18,7 @@ using CrawFB.DTO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DevExpress.XtraEditors.Filtering.Templates;
 using CrawFB.DAO;
+using OpenQA.Selenium.DevTools.V130.Debugger;
 
 namespace CrawFB
 {
@@ -55,13 +56,16 @@ namespace CrawFB
                     }
                 }
                 }
-                catch { MessageBox.Show("không tìm được Element button Share"); }
+                catch { MessageBox.Show("không tìm được Element button Share");
+                    
+                }
                 Libary.Instance.randomtime(6000, 10000);
                 if (luotshare != "")
                 {
                     txbSumShare.Text = luotshare;
                     int index = luotshare.IndexOf(" ");
                     luotshare = luotshare.Substring(0, index);
+                    //Console.WriteLine(luotshare);
                     luotshare = Libary.Instance.xulyKshare(luotshare);
                 }
                 int a = Convert.ToInt32(luotshare);
@@ -108,7 +112,9 @@ namespace CrawFB
                         {
                             string songtai = per.NoiSong.ToString();
                             string dentu = per.DenTu.ToString();
-                            dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, dentu, songtai);
+                            string tenfb = per.TenFb.ToString();
+                            string thongtinkhac = per.HocVan.ToString();
+                            dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, idfb, tenfb, dentu, songtai);
                         }
                     }
                 }
@@ -122,17 +128,28 @@ namespace CrawFB
         {
             foreach (DataGridViewRow row in dgvGetShareOnePost.Rows)
             {
-                string linkfb = row.Cells["linkfb"].ToString();
-                string idfb = row.Cells["IdFb"].ToString();
-                string tenfb = row.Cells["DisplayName"].ToString();
-                string noisong = "";
-                string dentu = "";
-                string hocvan = "";
-                if (PersonDAO.Instance.ShearchPerson("LinkFb", linkfb) == false)
+                if (!row.IsNewRow)
                 {
-                    string query = "INSERT INTO Person(TenFb, LinkFb, IdFbPerson, NoiSong, DenTu, HocVan) VALUES ("+tenfb+", "+linkfb+ ", "+idfb+", "+noisong+", "+dentu+", "+hocvan+")";
-                    DataProvider.Instance.ExecuteQuery(query);
-                }
+                    string linkfb = "";
+                    if (row.Cells["linkfb"].Value.ToString() != null) linkfb = row.Cells["linkfb"].Value.ToString();
+                    string idfb = "";
+                    if (row.Cells["IdFb"].Value.ToString() != null) idfb = row.Cells["IdFb"].Value.ToString();
+                    string tenfb = "";
+                    if (row.Cells["DisplayName"].Value.ToString() != null) idfb = row.Cells["DisplayName"].Value.ToString();
+                    string noisong = "";
+                    if (row.Cells["from"].Value.ToString() != null) noisong = row.Cells["from"].Value.ToString();
+                    string dentu = "";
+                    if (row.Cells["live"].Value.ToString() != null) dentu= row.Cells["live"].Value.ToString();
+                    string hocvan = "";
+                    if (row.Cells["thongtinkhac"].Value.ToString() != null) hocvan = row.Cells["thongtinkhac"].Value.ToString();
+                    if (PersonDAO.Instance.ShearchPerson("LinkFb", linkfb) == false)
+                    {
+                        string query = "INSERT INTO Person(TenFb, LinkFb, IdFbPerson, NoiSong, DenTu, HocVan) VALUES (N'" + tenfb + "', N'" + linkfb + "', N'" + idfb + "', N'" + noisong + "', N'" + dentu + "', N'" + hocvan + "')";
+                        DataProvider.Instance.ExecuteQuery(query);
+                        MessageBox.Show("luu doi tuong thanh cong");
+                    }
+                }    
+                    
             }
         }
     }
