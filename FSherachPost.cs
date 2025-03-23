@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using DevExpress.XtraPrinting.Shape;
 using DevExpress.XtraPrinting;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using CrawFB.DAO;
 
 
 namespace CrawFB
@@ -126,8 +127,7 @@ namespace CrawFB
                     Libary.Instance.randomtime(6000, 10000); ;
                     int j = 1;
                     while (postCount < 7)
-                    {
-                        //driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
+                    {                      
                         var posts = driver.FindElements(By.CssSelector("div[role='article']"));
                        
                         foreach (var post in posts)
@@ -138,15 +138,15 @@ namespace CrawFB
                                string linkpage = ""; string shareCount = "N/A";
                                 string trangthai = "N/A";//reset trạng thái
                                 string userName = "N/A", userLink = "N/A";
-                                string pageName = "", pageLink = "";                              
-                                string fullcontent = "";
+                                string pageName = "", pageLink = "", noidunggoc = "";                          
+                                string fullcontent = ""; string usernameoriginal = "N/A"; string linkoriginal = "N/A";
                                 //lấy thông tin bài đăng
                                 Console.WriteLine("------bat dau--------");
                                 var postinfor = post.FindElements(By.CssSelector("div[class='xu06os2 x1ok221b']"));
                                 Console.WriteLine("phần tử postinfor: " + postinfor.Count);
                                 List<string> timeList = new List<string>(); // danh sách giờ
                                 List<string> linkList = new List<string>(); //danh sách link                                                                                                                                                  
-                                        foreach (var temp in postinfor)
+                                        foreach (var temp in postinfor)// lướt từng infor lấy text để so sánh
                                         {
                                             string textContent = temp.Text.Trim();
                                             if (!string.IsNullOrEmpty(textContent) && Regex.IsMatch(textContent, @"(\d+\s*(giờ|phút|ngày|hôm qua|Tháng))", RegexOptions.IgnoreCase))
@@ -159,21 +159,22 @@ namespace CrawFB
                                             }
                                         }
                                     string shareTime = "", originalTime = "", sharePostLink = "", originalPostLink = "";
-                                    if (timeList.Count == 1)
+                                    if (timeList.Count == 1) // có 1 mốc thời gian
                                     {
                                         // 🔸 Bài tự đăng
-                                        originalTime = timeList[0];
-                                        originalPostLink = linkList[0];
-                                        linkbaiviet = originalPostLink;
-                                    }
-                                    else if (timeList.Count == 2)
+                                        shareTime = timeList[0];
+                                    // originalPostLink = linkList[0];
+                                    linkbaiviet = ShearchPostDAO.Instance.ShortenFacebookPostLink(linkList[0]);
+                                      
+                                }
+                                    else if (timeList.Count == 2) // có 2 mốc thời gian => bài share
                                     {
                                         // 🔹 Bài share
                                         shareTime = timeList[0];
                                         originalTime = timeList[1];
                                         sharePostLink = linkList[0];
                                         originalPostLink = linkList[1];
-                                    linkbaiviet = sharePostLink;
+                                    linkbaiviet = ShearchPostDAO.Instance.ShortenFacebookPostLink(sharePostLink); 
                                 }
                                     Console.WriteLine("thời gian 1:" + originalTime);
                                     Console.WriteLine("thời gian 2:" + shareTime);
@@ -188,9 +189,36 @@ namespace CrawFB
                                         //phần tử đầu tiên luôn là người đăng hoặc share lại
                                     
                                         var userElement = postinfor[0].FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
-                                        if (timeList.Count == 1)
+                                    if (timeList.Count == 1)
+                                    {
+                                        // 🔸 Bài tự đăng                                           
+                                        if (postinfor.Count == 0)
                                         {
-                                            var pagePost = postinfor[1].FindElements(By.CssSelector("span[class='x193iq5w xeuugli']")); // kiểm tra có phải đăng page
+                                            trangthai = "bài đăng có video";
+                                            Console.WriteLine("bài video");
+                                            var videopost = post.FindElements(By.CssSelector("a[class ='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xkrqix3 x1sur9pj x1s688f']"));
+                                            if (videopost.Count > 0)
+                                            {
+                                                foreach (var v in videopost)
+                                                {
+                                                    Console.WriteLine(v.Text.ToString());
+                                                    Console.WriteLine(v.GetAttribute("href").ToString());
+                                                }
+                                            }
+                                            var timevideopost = post.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j']"));
+                                            if (timevideopost.Count > 0)
+                                            {
+                                                foreach (var t in timevideopost)
+                                                {
+                                                    Console.WriteLine(t.Text.ToString());
+                                                    // Console.WriteLine(t.GetAttribute("href").ToString());
+                                                }
+                                            }
+                                        }
+                                        if (postinfor.Count == 3) // có nội dung
+                                        {
+                                            // kiểm tra có phải bài cá nhân đăng page
+                                            var pagePost = postinfor[1].FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa x1s688f xi81zsa']")); // kiểm tra có phải đăng page
                                             if (pagePost.Count > 0)
                                             {
                                                 foreach (var page in pagePost)
@@ -207,132 +235,196 @@ namespace CrawFB
                                                     pageLink = inforper.GetAttribute("href");
                                                     Console.WriteLine("Địa Chỉ PAge: " + linkpage);
                                                     pageName = inforper.Text;
-                                                    // Console.WriteLine(namepage);
                                                 }
-                                            trangthai = "Cá nhân Đăng Page";
+                                                trangthai = "Cá nhân Đăng Page";
                                             }
-                                            // 🔸 Bài tự đăng
-                                            if (userElement.Count > 0)
+                                            else
                                             {
-                                                userName = userElement[0].Text.Trim();
-                                                userLink = userElement[0].GetAttribute("href");
-                                            trangthai = "Bài cá nhân, Page tự đăng";
-                                            }
-                                            Console.WriteLine("bài tự đăng: " + userName + " link:" + userLink);
-                                            if (postinfor.Count == 0)
-                                            {
-                                            trangthai = "bài đăng có video";
-                                                Console.WriteLine("bài video");
-                                                var videopost = post.FindElements(By.CssSelector("a[class ='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xkrqix3 x1sur9pj x1s688f']"));
-                                                if (videopost.Count > 0)
+                                                //-------------------------------------------// kiểm tra bài đăng cá nhân
+                                                if (userElement.Count > 0)
                                                 {
-                                                    foreach (var v in videopost)
-                                                    {
-                                                        Console.WriteLine(v.Text.ToString());
-                                                        Console.WriteLine(v.GetAttribute("href").ToString());
-                                                    }
+                                                    userName = userElement[0].Text.Trim();
+                                                    userLink = userElement[0].GetAttribute("href");
+                                                    userLink = ShearchPostDAO.Instance.ExtractFbShortLink(userLink);
+                                                    trangthai = "Bài cá nhân, Page tự đăng";
                                                 }
-                                                var timevideopost = post.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j']"));
-                                                if (timevideopost.Count > 0)
+                                                else
                                                 {
-                                                    foreach (var t in timevideopost)
-                                                    {
-                                                        Console.WriteLine(t.Text.ToString());
-                                                        // Console.WriteLine(t.GetAttribute("href").ToString());
-                                                    }
-                                                }
-                                            }
-                                            if (postinfor.Count == 3) // có nội dung
-                                            {
-                                            trangthai = "bài đăng bình thường";
-                                                try
-                                                {
-                                                    var countShareElement = post.FindElement(By.CssSelector("span[class='html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']"));
-                                                    shareCount = countShareElement.Text.Trim();
-                                                }
-                                                catch (NoSuchElementException)
-                                                {
-                                                    shareCount = "N/A"; // Không có số lượt chia sẻ
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    Console.WriteLine("❌ Lỗi khi lấy số lượt chia sẻ: " + ex.Message);
-                                                }
-                                                var contentpost = post.FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h']"));
+                                                    var specialpost = postinfor[0].FindElements(By.CssSelector("span[class='xjp7ctv']>span>span>a"));
 
-                                                foreach (var content in contentpost)
-                                                {
-                                                    if (content.Text.IndexOf("Xem thêm") != -1)
+                                                    if (specialpost.Count > 0)
                                                     {
-                                                        try
-                                                        {
-                                                            // Tìm `div[role='button']` bên trong `span` đó
-                                                            var seeMoreButton = content.FindElement(By.CssSelector("div[role='button']"));
-                                                            // Click để mở rộng nội dung
-                                                            //((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", seeMoreButton);
-                                                            Thread.Sleep(1000); // Đợi 1s trước khi click
-                                                            seeMoreButton.Click();
-                                                            Thread.Sleep(2000); // Chờ nội dung mở rộng
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                            Console.WriteLine("Lỗi khi click 'Xem thêm': " + ex.Message);
-                                                        }
+                                                        userName = specialpost[0].Text.Trim();
+                                                        userLink = specialpost[0].GetAttribute("href");
+                                                        userLink = ShearchPostDAO.Instance.ExtractFbShortLink(userLink);
+                                                        trangthai = "Bài đăng đặc biệt";
                                                     }
-                                                    fullcontent += content.Text.Trim() + "\n";
+
                                                 }
-                                                Console.WriteLine("nôi dung bai viet: " + fullcontent);
                                             }
-                                            if (postinfor.Count == 2) // kiểm tra xem có chữ nền ảnh
+                                            
+                                            // lấy nội dung chung
+                                            try
                                             {
-                                                string backgroundContent = "";
-                                                var bgContentElements = post.FindElements(By.CssSelector("div[class='xdj266r x11i5rnm']"));
-                                                if (bgContentElements.Count > 0)
+                                                var countShareElement = post.FindElement(By.CssSelector("span[class='html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']"));
+                                                shareCount = countShareElement.Text.Trim();
+                                            }
+                                            catch (NoSuchElementException)
+                                            {
+                                                shareCount = "N/A"; // Không có số lượt chia sẻ
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine("❌ Lỗi khi lấy số lượt chia sẻ: " + ex.Message);
+                                            }
+                                            var contentpost = post.FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h']"));
+
+                                            foreach (var content in contentpost)
+                                            {
+                                                if (content.Text.IndexOf("Xem thêm") != -1)
                                                 {
-                                                    backgroundContent = bgContentElements[0].Text.Trim();
+                                                    try
+                                                    {
+                                                        // Tìm `div[role='button']` bên trong `span` đó
+                                                        var seeMoreButton = content.FindElement(By.CssSelector("div[role='button']"));
+                                                        // Click để mở rộng nội dung
+                                                        //((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", seeMoreButton);
+                                                        Thread.Sleep(1000); // Đợi 1s trước khi click
+                                                        seeMoreButton.Click();
+                                                        Thread.Sleep(2000); // Chờ nội dung mở rộng
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        Console.WriteLine("Lỗi khi click 'Xem thêm': " + ex.Message);
+                                                    }
                                                 }
+                                                fullcontent += content.Text.Trim() + "\n";
+                                            }
+                                            Console.WriteLine("nôi dung bai viet: " + fullcontent);
+                                        }
+                                        if (postinfor.Count == 2) // kiểm tra xem có chữ nền ảnh
+                                        {
+                                            (trangthai, userName, userLink) = ShearchPostDAO.Instance.GetPostInfo(postinfor[0]);
+
+                                            string backgroundContent = "";
+                                            var bgContentElements = post.FindElements(By.CssSelector("div[class='xdj266r x11i5rnm']"));
+                                            if (bgContentElements.Count > 0)
+                                            {
+                                                backgroundContent = bgContentElements[0].Text.Trim();
+                                            }
                                             fullcontent = backgroundContent;
                                             trangthai = "bài đăng nền màu";
                                         }
-                                        }
-                                        else if (timeList.Count == 2)
+                                        if (postinfor.Count == 5)
                                         {
-                                        if (userElement.Count > 0)
-                                        {
-                                            userName = userElement[0].Text.Trim();
-                                            userLink = userElement[0].GetAttribute("href");
-                                        }
-                                        Console.WriteLine("bài share lại: " + userName + " link:" + userLink);
-                                        if (postinfor.Count == 6) // share lại page đủ 2 nội dung
-                                            {
-                                            trangthai = "bài share lại bài cá nhân, page";
-                                            var contentpost = post.FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h']"));
+                                            (trangthai, userName, userLink) = ShearchPostDAO.Instance.GetPostInfo(postinfor[0]);                                       
+                                            var contentpost = postinfor[2].FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h']"));
 
-                                                foreach (var content in contentpost)
+                                            foreach (var content in contentpost)
+                                            {
+                                                if (content.Text.IndexOf("Xem thêm") != -1)
                                                 {
-                                                    if (content.Text.IndexOf("Xem thêm") != -1)
+                                                    try
                                                     {
-                                                        try
-                                                        {
-                                                            // Tìm `div[role='button']` bên trong `span` đó
-                                                            var seeMoreButton = content.FindElement(By.CssSelector("div[role='button']"));
-                                                            // Click để mở rộng nội dung
-                                                            //((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", seeMoreButton);
-                                                            Thread.Sleep(1000); // Đợi 1s trước khi click
-                                                            seeMoreButton.Click();
-                                                            Thread.Sleep(2000); // Chờ nội dung mở rộng
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                            Console.WriteLine("Lỗi khi click 'Xem thêm': " + ex.Message);
-                                                        }
+                                                        // Tìm `div[role='button']` bên trong `span` đó
+                                                        var seeMoreButton = content.FindElement(By.CssSelector("div[role='button']"));
+                                                        // Click để mở rộng nội dung
+                                                        //((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", seeMoreButton);
+                                                        Thread.Sleep(1000); // Đợi 1s trước khi click
+                                                        seeMoreButton.Click();
+                                                        Thread.Sleep(2000); // Chờ nội dung mở rộng
                                                     }
-                                                    fullcontent += content.Text.Trim() + "\n";
+                                                    catch (Exception ex)
+                                                    {
+                                                        Console.WriteLine("Lỗi khi click 'Xem thêm': " + ex.Message);
+                                                    }
                                                 }
-                                                Console.WriteLine("nôi dung bai viet: " + fullcontent);
+                                                fullcontent += content.Text.Trim() + "\n";
+                                                trangthai = "bài tự đăng có gắn link ngoài";
                                             }
                                         }
-                                        else if (postinfor.Count == 5)
+                                    }
+                                    else
+                                    if (timeList.Count == 2)
+                                    {                                               
+                                        if (postinfor.Count == 6) // một bài đăng page một bài khác và bài share lại bài người khácc
+                                        {                
+                                            noidunggoc = string.Empty;
+                                            // kiểm tra bài đăng page
+                                            var pagePost = postinfor[1].FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa x1s688f xi81zsa']")); // kiểm tra có phải đăng page
+                                            if (pagePost.Count > 0) // là bài đăng page 
+                                            {
+                                                foreach (var page in pagePost)
+                                                {
+                                                    userName = page.Text;
+                                                    Console.WriteLine(userName);
+                                                    if (!userName.Contains("ẩn danh")) userLink = page.GetAttribute("href");
+                                                }
+                                                foreach (var inforper in userElement)
+                                                {
+                                                    pageLink = inforper.GetAttribute("href");
+                                                    pageName = inforper.Text;
+                                                }
+
+                                            }
+                                            else // không phải thì là share lại
+                                            {
+                                                var userpost = postinfor[0].FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
+                                                if (userpost.Count > 0)
+                                                {
+                                                    userName = userpost[0].Text.Trim();
+                                                    userLink = userpost[0].GetAttribute("href");
+                                                    userLink = ShearchPostDAO.Instance.ExtractFbShortLink(userLink);
+                                                }
+                                                trangthai = "bài share lại bài cá nhân, page";
+                                            }
+                                            // lấy người đăng gốc
+                                            var userElement1 = postinfor[3].FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
+                                            if (userElement1.Count > 0)
+                                            {
+                                                usernameoriginal = userElement1[0].Text.Trim();
+                                                linkoriginal = userElement1[0].GetAttribute("href");
+                                            }
+                                            else
+                                            {
+                                                var userElement2 = postinfor[3].FindElements(By.CssSelector("span[class='xjp7ctv']>span>span>a"));
+
+                                                if (userElement2.Count > 0)
+                                                {
+                                                    usernameoriginal = userElement2[0].Text.Trim();
+                                                    linkoriginal = userElement2[0].GetAttribute("href");
+                                                    linkoriginal = ShearchPostDAO.Instance.ExtractFbShortLink(linkoriginal);
+                                                    //trangthai = "Bài đăng đặc biệt";
+                                                }
+                                            }
+
+                                            var contentpost = postinfor[2].FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h']"));
+
+                                            foreach (var content in contentpost)
+                                            {
+                                                if (content.Text.IndexOf("Xem thêm") != -1)
+                                                {
+                                                    try
+                                                    {
+                                                        // Tìm `div[role='button']` bên trong `span` đó
+                                                        var seeMoreButton = content.FindElement(By.CssSelector("div[role='button']"));
+                                                        // Click để mở rộng nội dung
+                                                        //((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", seeMoreButton);
+                                                        Thread.Sleep(1000); // Đợi 1s trước khi click
+                                                        seeMoreButton.Click();
+                                                        Thread.Sleep(2000); // Chờ nội dung mở rộng
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        Console.WriteLine("Lỗi khi click 'Xem thêm': " + ex.Message);
+                                                    }
+                                                }
+                                                fullcontent += content.Text.Trim() + "\n";
+                                            }
+                                            noidunggoc = ShearchPostDAO.Instance.GetFullPostContent(postinfor[5]);
+                                        }
+                                    }
+                                    else if (postinfor.Count == 5)
                                     {
                                         var indexuser = post.FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
                                         if (indexuser.Count == 6)
@@ -340,14 +432,37 @@ namespace CrawFB
                                             trangthai = "đăng lên page một bài của người khác";
                                             userName = indexuser[4].Text;
                                             pageName = indexuser[4].Text;
-                                        }    
+
+                                            var fullcontent2 = postinfor[2];
+                                            fullcontent = ShearchPostDAO.Instance.GetFullPostContent(fullcontent2);
+
+                                            var userElement1 = postinfor[3].FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
+                                            if (userElement1.Count > 0)
+                                            {
+                                                usernameoriginal = userElement1[0].Text.Trim();
+                                                linkoriginal = userElement1[0].GetAttribute("href");
+                                                linkoriginal = ShearchPostDAO.Instance.ExtractFbShortLink(linkoriginal);
+                                            }
+                                            else
+                                            {
+                                                var userElement2 = postinfor[3].FindElements(By.CssSelector("span[class='xjp7ctv']>span>span>a"));
+
+                                                if (userElement2.Count > 0)
+                                                {
+                                                    usernameoriginal = userElement2[0].Text.Trim();
+                                                    linkoriginal = userElement2[0].GetAttribute("href");
+                                                    linkoriginal = ShearchPostDAO.Instance.ExtractFbShortLink(linkoriginal);
+                                                    //trangthai = "Bài đăng đặc biệt";
+                                                }
+                                            }
+                                        }
+
+
                                     }    
                                    
-
-
                                     }
                                 //listshearchpost.Add(new ShearchPost(userName, userLink, shareTime, linkbaiviet, originalTime, originalPostLink, fullcontent, pageName, pageLink, shareCount, ""));
-                                dataGridView1.Rows.Add(j++, fullcontent, userName, userLink, shareTime, linkbaiviet, pageName, pageLink, originalPostLink, originalTime, shareCount, trangthai);
+                                dataGridView1.Rows.Add(j++, fullcontent, userName, userLink, shareTime, linkbaiviet, pageName, pageLink, originalPostLink, originalTime, noidunggoc,usernameoriginal, linkoriginal, shareCount, trangthai);
                                     postCount++;                           
                                 
                             }
@@ -396,6 +511,8 @@ namespace CrawFB
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
                txtFullPost.Text = row.Cells["noidung"].Value?.ToString();
+                txblinkbv.Text = row.Cells["linkbaiviet"].Value?.ToString();
+                txbnoidunggoc.Text = row.Cells["noidunggoc"].Value?.ToString();
             }    
         }
     }
