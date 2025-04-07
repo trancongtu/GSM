@@ -37,6 +37,13 @@ namespace CrawFB
         {
             InitializeComponent();
             CheckAndCreateKeywordFile();
+           //this.WindowState = FormWindowState.Normal;
+           this.Size = new Size(1750, 800);  // Đặt kích thước chuẩn
+            this.MinimumSize = new Size(1000, 500); // Đảm bảo Form không quá nhỏ
+            //this.Resize += new EventHandler(FSherachPost_Resize);
+            //panelbinding.MaximumSize = new Size(0, 250);
+            dataGridView1.ScrollBars = ScrollBars.Both;
+
         }
         private void CheckAndCreateKeywordFile()
         {
@@ -218,17 +225,16 @@ namespace CrawFB
                                         if (postinfor.Count == 3) // có nội dung
                                         {
                                             // kiểm tra có phải bài cá nhân đăng page
-                                            var pagePost = postinfor[1].FindElements(By.CssSelector("span[class = 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa x1s688f xi81zsa']")); // kiểm tra có phải đăng page
+                                            var pagePost = postinfor[1].FindElements(By.CssSelector("span[class='xjp7ctv'] > a")); // kiểm tra có phải đăng page
                                             if (pagePost.Count > 0)
                                             {
-                                                foreach (var page in pagePost)
-                                                {
+                                               
                                                     // Console.WriteLine("Người đăng: "+page.Text.ToString());
-                                                    userName = page.Text;
+                                                    userName = pagePost[0].Text;
                                                     Console.WriteLine(userName);
-                                                    if (!userName.Contains("ẩn danh")) userLink = page.GetAttribute("href");
+                                                    if (!userName.Contains("ẩn danh")) userLink = pagePost[0].GetAttribute("href");
                                                     Console.WriteLine("Địa chỉ người đăng: " + userLink);
-                                                }
+                                                
                                                 foreach (var inforper in userElement)
                                                 {
                                                     Console.WriteLine("Đăng Trên PAge: " + inforper.Text.ToString());
@@ -514,6 +520,21 @@ namespace CrawFB
                 txblinkbv.Text = row.Cells["linkbaiviet"].Value?.ToString();
                 txbnoidunggoc.Text = row.Cells["noidunggoc"].Value?.ToString();
             }    
+        }
+
+        private void dataGridView1_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FSherachPost_Resize(object sender, EventArgs e)
+        {
+            this.ClientSize = new Size(dataGridView1.Width + 20, dataGridView1.Height + 50);
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

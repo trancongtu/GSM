@@ -35,14 +35,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txbSumShare = new System.Windows.Forms.TextBox();
             this.btnGet = new System.Windows.Forms.Button();
+            this.btnSavePerson = new System.Windows.Forms.Button();
             this.STT = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LinkShare = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.linkfb = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdFb = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DisplayName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.form = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.from = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.live = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnSavePerson = new System.Windows.Forms.Button();
+            this.thongtinkhac = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGetShareOnePost)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,13 +82,14 @@
             this.linkfb,
             this.IdFb,
             this.DisplayName,
-            this.form,
-            this.live});
+            this.from,
+            this.live,
+            this.thongtinkhac});
             this.dgvGetShareOnePost.Location = new System.Drawing.Point(46, 149);
             this.dgvGetShareOnePost.Name = "dgvGetShareOnePost";
             this.dgvGetShareOnePost.RowHeadersWidth = 51;
             this.dgvGetShareOnePost.RowTemplate.Height = 24;
-            this.dgvGetShareOnePost.Size = new System.Drawing.Size(954, 447);
+            this.dgvGetShareOnePost.Size = new System.Drawing.Size(1082, 447);
             this.dgvGetShareOnePost.TabIndex = 2;
             // 
             // label2
@@ -118,6 +120,16 @@
             this.btnGet.Text = "Thống KÊ";
             this.btnGet.UseVisualStyleBackColor = true;
             this.btnGet.Click += new System.EventHandler(this.btnGet_Click);
+            // 
+            // btnSavePerson
+            // 
+            this.btnSavePerson.Location = new System.Drawing.Point(1134, 149);
+            this.btnSavePerson.Name = "btnSavePerson";
+            this.btnSavePerson.Size = new System.Drawing.Size(77, 57);
+            this.btnSavePerson.TabIndex = 6;
+            this.btnSavePerson.Text = "Lưu Đối Tượng";
+            this.btnSavePerson.UseVisualStyleBackColor = true;
+            this.btnSavePerson.Click += new System.EventHandler(this.btnSavePerson_Click);
             // 
             // STT
             // 
@@ -154,12 +166,12 @@
             this.DisplayName.Name = "DisplayName";
             this.DisplayName.Width = 150;
             // 
-            // form
+            // from
             // 
-            this.form.HeaderText = "Đến Từ";
-            this.form.MinimumWidth = 6;
-            this.form.Name = "form";
-            this.form.Width = 150;
+            this.from.HeaderText = "Đến Từ";
+            this.from.MinimumWidth = 6;
+            this.from.Name = "from";
+            this.from.Width = 150;
             // 
             // live
             // 
@@ -168,21 +180,18 @@
             this.live.Name = "live";
             this.live.Width = 150;
             // 
-            // btnSavePerson
+            // thongtinkhac
             // 
-            this.btnSavePerson.Location = new System.Drawing.Point(1019, 149);
-            this.btnSavePerson.Name = "btnSavePerson";
-            this.btnSavePerson.Size = new System.Drawing.Size(102, 57);
-            this.btnSavePerson.TabIndex = 6;
-            this.btnSavePerson.Text = "Lưu Đối Tượng";
-            this.btnSavePerson.UseVisualStyleBackColor = true;
-            this.btnSavePerson.Click += new System.EventHandler(this.btnSavePerson_Click);
+            this.thongtinkhac.HeaderText = "Thông tin khác";
+            this.thongtinkhac.MinimumWidth = 6;
+            this.thongtinkhac.Name = "thongtinkhac";
+            this.thongtinkhac.Width = 125;
             // 
             // fGetShareonePost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1133, 607);
+            this.ClientSize = new System.Drawing.Size(1237, 607);
             this.Controls.Add(this.btnSavePerson);
             this.Controls.Add(this.btnGet);
             this.Controls.Add(this.txbSumShare);
@@ -206,13 +215,14 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txbSumShare;
         private System.Windows.Forms.Button btnGet;
+        private System.Windows.Forms.Button btnSavePerson;
         private System.Windows.Forms.DataGridViewTextBoxColumn STT;
         private System.Windows.Forms.DataGridViewTextBoxColumn LinkShare;
         private System.Windows.Forms.DataGridViewTextBoxColumn linkfb;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdFb;
         private System.Windows.Forms.DataGridViewTextBoxColumn DisplayName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn form;
+        private System.Windows.Forms.DataGridViewTextBoxColumn from;
         private System.Windows.Forms.DataGridViewTextBoxColumn live;
-        private System.Windows.Forms.Button btnSavePerson;
+        private System.Windows.Forms.DataGridViewTextBoxColumn thongtinkhac;
     }
 }

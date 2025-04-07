@@ -37,6 +37,7 @@ namespace CrawFB
             option.AddArgument("--disable-infobars");
             option.AddArgument("start-maximized");
             option.AddArgument("--disable-extensions");
+            option.AddArgument("--disable-blink-features=AutomationControlled");
             // Pass the argument 1 to allow and 2 to block
             return option;
         }

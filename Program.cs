@@ -17,7 +17,7 @@ namespace CrawFB
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new fBegin());
+            Application.Run(new FShearchPost2());
         }
     }
 }
