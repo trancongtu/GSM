@@ -34,6 +34,7 @@ namespace CrawFB
         string projectFolder = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
         string dataFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
         string keywordFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "keywords.txt");
+        string blacklistfile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "keywordsfilter.txt");
         private Dictionary<int, string> postDetails = new Dictionary<int, string>(); // ✅ Khai báo biến toàn cục
         private int sobai = 10;
         private string thoigian = "1 ngày";
@@ -187,7 +188,7 @@ namespace CrawFB
                     searchBox.SendKeys($"\"{keyword}\"");
                     searchBox.SendKeys(OpenQA.Selenium.Keys.Enter);
                     Thread.Sleep(5000);
-                    //int maxPosts = 10; // Lấy tối đa 10 bài viết
+              
 
                     List<string> uniquePosts = new List<string>();
                     int postCount = 0;
@@ -376,20 +377,43 @@ namespace CrawFB
                                             }
                                             if (postinfor.Count == 2) // kiểm tra xem có chữ nền ảnh
                                             {
-                                                (trangthai, userName, userLink) = ShearchPostDAO.Instance.GetPostInfo(postinfor[0]);
+                                                var pagePost = postinfor[1].FindElements(By.CssSelector("span[class='xjp7ctv'] > a")); // kiểm tra có phải đăng page
+                                                if (pagePost.Count > 0)
+                                                {
 
-                                               // string backgroundContent = "";
+                                                    // Console.WriteLine("Người đăng: "+page.Text.ToString());
+                                                    // Console.WriteLine("bài đăng có nội dung và cá nhân đăng page");
+                                                    userName = pagePost[0].Text;
+                                                    Console.WriteLine(userName);
+                                                    if (!userName.Contains("ẩn danh")) userLink = pagePost[0].GetAttribute("href");
+                                                    Console.WriteLine("Địa chỉ người đăng: " + userLink);
+
+                                                    foreach (var inforper in userElement)
+                                                    {
+                                                        Console.WriteLine("Đăng Trên PAge: " + inforper.Text.ToString());
+                                                        pageLink = inforper.GetAttribute("href");
+                                                        Console.WriteLine("Địa Chỉ PAge: " + pageLink);
+                                                        pageName = inforper.Text;
+                                                    }
+                                                    trangthai = "Cá nhân Đăng Page nen mau";
+                                                }
+                                                else
+                                                {
+                                                    (trangthai, userName, userLink) = ShearchPostDAO.Instance.GetPostInfo(postinfor[0]);                                               
+                                                    trangthai = "bài đăng ca nhan nền màu";
+                                                }
+                                                // string backgroundContent = "";
                                                 var bgContentElements = post.FindElements(By.CssSelector("div[class='xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs']"));
                                                 if (bgContentElements.Count > 0)
                                                 {
-                                                   // MessageBox.Show("vao den mau0");
+                                                    // MessageBox.Show("vao den mau0");
                                                     foreach (var cont in bgContentElements)
-                                                            {
+                                                    {
                                                         fullcontent += cont.Text.Trim();
-                                                            }
+                                                    }
                                                 }
-                                               // fullcontent = backgroundContent;
-                                                trangthai = "bài đăng nền màu";
+                                                // fullcontent = backgroundContent;
+
                                             }
                                             if (postinfor.Count == 5)
                                             {
@@ -556,15 +580,25 @@ namespace CrawFB
                                         Console.WriteLine($"Số bình luận: {commentCount}, Số chia sẻ: {shareCount}");
                                     }
                                                 catch (Exception ex)
-                            {
-                                Console.WriteLine("❌ Lỗi khi lấy số lượt chia sẻ: " + ex.Message);
-                            }
+                                                {
+                                                    Console.WriteLine("❌ Lỗi khi lấy số lượt chia sẻ: " + ex.Message);
+                                                }
                         }
-                                //listshearchpost.Add(new ShearchPost(userName, userLink, shareTime, linkbaiviet, originalTime, originalPostLink, fullcontent, pageName, pageLink, shareCount, ""));
-                                //dataGridView1.Rows.Add(j++, fullcontent, linkbaiviet, shareTime, shareCount,commentCount, trangthai);
-                                listpost.Add(new ShearchPost(userName, userLink, shareTime, linkbaiviet, fullcontent, originalTime, originalPostLink, usernameoriginal, noidunggoc, pageName, pageLink, shareCount, commentCount,trangthai));
+                                List<string> tuKhoaTieuCuc = File.ReadAllLines(blacklistfile)
+                                 .Select(x => x.Trim().ToLower())
+                                 .Where(x => !string.IsNullOrEmpty(x))
+                                 .ToList();
+                                int diemtieucuc = 0;
+                                string noiDungLower = fullcontent.ToLower();
+                                foreach (var tu in tuKhoaTieuCuc)
+                                {
+                                    if (noiDungLower.Contains(tu))
+                                    {
+                                        diemtieucuc++;
+                                    }
+                                }
+                                listpost.Add(new ShearchPost(userName, userLink, shareTime, linkbaiviet, fullcontent, originalTime, originalPostLink, usernameoriginal, noidunggoc, pageName, pageLink, shareCount, commentCount,trangthai, diemtieucuc));
                                 postCount++;
-
                             }
                             catch (Exception ex)
                             {
@@ -572,7 +606,7 @@ namespace CrawFB
                             }
                         }
 
-                        if (postCount < 7)
+                        if (postCount < sobai)
                         {
                             Console.WriteLine("⬇️ Đang cuộn xuống để lấy thêm bài viết...");
                             driver.ExecuteScript("window.scrollTo(0, document.body.scrollHeight)");
@@ -593,10 +627,16 @@ namespace CrawFB
             {
                 driver.Quit();
             }
-            foreach (ShearchPost post in listpost)
+            var listTieuCuc = listpost
+            .Where(p => p.Diemtieucuc > 0)
+             .OrderByDescending(p => p.Diemtieucuc)
+            .ToList();
+            Console.WriteLine(" so phan tu listpot :" +listpost.Count);
+            Console.WriteLine(" so phan tu listieucuc :" + listTieuCuc.Count);
+            foreach (ShearchPost post in listTieuCuc)
             {
                 // Ví dụ hiển thị: Content, LinkPost, TimePost, ShareCount, CommentCount1
-                int rowIndex = dataGridView1.Rows.Add(j++, post.Content, post.LinkPost, post.TimePost, post.ShareCount, post.CommentCount, post.StatusPost);
+                int rowIndex = dataGridView1.Rows.Add(j++, post.Content, post.LinkPost, post.TimePost, post.ShareCount, post.CommentCount, post.StatusPost, post.Diemtieucuc);
 
                 // Lưu đối tượng post vào thuộc tính Tag của dòng
                 dataGridView1.Rows[rowIndex].Tag = post;
@@ -610,6 +650,7 @@ namespace CrawFB
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
                 txtFullPost.Text = row.Cells["noidung"].Value?.ToString();
                 txblinkbv.Text = row.Cells["diachibv"].Value?.ToString();
+            
                 if (dataGridView1.Columns[e.ColumnIndex].Name == "DetailButton" && e.RowIndex >= 0)
                 {
                     ShearchPost selectedPost = dataGridView1.Rows[e.RowIndex].Tag as ShearchPost;

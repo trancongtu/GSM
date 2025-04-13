@@ -19,7 +19,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DevExpress.XtraEditors.Filtering.Templates;
 using CrawFB.DAO;
 using OpenQA.Selenium.DevTools.V130.Debugger;
-
+using ClosedXML.Excel;
+using OpenQA.Selenium.Support.UI;
 namespace CrawFB
 {
     public partial class fGetShareonePost : Form
@@ -33,31 +34,58 @@ namespace CrawFB
 
         private void btnGet_Click(object sender, EventArgs e)
         {
+            lbStatus.Text = "Đang tìm kiếm";
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
 
             if (txbLinkPost.Text != "")
             {
                 ChromeOptions options = Libary.Instance.Options();
                 ChromeDriver Driver = new ChromeDriver(options);
+                WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
                 Driver.Url = txbLinkPost.Text;
                 string sumshare = "";
                 string luotshare = "";
                 List<PersonShare> personshare = new List<PersonShare>();
-                 try
+                try
                 {
-                List<IWebElement> btnshare = new List<IWebElement>(Driver.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']")));
-                foreach (IWebElement btn in btnshare)
-                {
-                    //Console.WriteLine(btn.Text);
-                    sumshare = btn.Text;
-                    if ((sumshare.IndexOf("lượt chia sẻ") != -1) || (sumshare.IndexOf("shares") != -1))
+                    // Delay ngẫu nhiên để tránh bị phát hiện tự động
+                    Libary.Instance.randomtime(5000, 10000);
+
+                    personshare.Clear();
+
+                    string selectorShare = "span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs xkrqix3 x1sur9pj']";
+
+                    // Chờ đến khi có ít nhất 1 nút "chia sẻ" xuất hiện
+                    wait.Until(driver => driver.FindElements(By.CssSelector(selectorShare)).Count > 0);
+
+                    List<IWebElement> btnshare = new List<IWebElement>(Driver.FindElements(By.CssSelector(selectorShare)));
+
+                    foreach (IWebElement btn in btnshare)
                     {
-                        btn.Click();
-                        luotshare = btn.Text;
+                        try
+                        {
+                            lbStatus.Text = "Kéo lượt share";
+                            sumshare = btn.Text;
+
+                            // Kiểm tra nếu text có chứa thông tin lượt chia sẻ
+                            if (sumshare.Contains("lượt chia sẻ") || sumshare.Contains("shares"))
+                            {
+                                if (btn.Displayed && btn.Enabled)
+                                {
+                                    btn.Click();
+                                    luotshare = btn.Text; // Cập nhật lại sau click (nếu cần)
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Lỗi khi xử lý một nút chia sẻ: " + ex.Message);
+                        }
                     }
                 }
-                }
-                catch { MessageBox.Show("không tìm được Element button Share");
-                    
+                catch
+                {
+                    MessageBox.Show("Không tìm được Element button Share");
                 }
                 Libary.Instance.randomtime(6000, 10000);
                 if (luotshare != "")
@@ -101,56 +129,70 @@ namespace CrawFB
                 foreach (PersonShare person2 in personshare)
                 {
                     List<Person> person = new List<Person>();
+                   
+                    string filePath = Path.Combine(folderPath, "DanhSachDoiTuong.xlsx");
                     string linkfb = person2.LinkFb.ToString();
                     string diachichiase = person2.DiachiShare.ToString();
                     string idfb = person2.IdFb.ToString();
                     if (linkfb != "")
                     {
-
-                        person = Libary.Instance.ThongtinPerson(Driver, linkfb);
-                        foreach (Person per in person)
+                        if (File.Exists(filePath))
                         {
-                            string songtai = per.NoiSong.ToString();
-                            string dentu = per.DenTu.ToString();
-                            string tenfb = per.TenFb.ToString();
-                            string thongtinkhac = per.HocVan.ToString();
-                            dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, idfb, tenfb, dentu, songtai);
+                           // string existingTenFb, existingIdFb, existingNameFb, existingUrlFb = "";
+                            if (ExcellHelp.Instance.CompareLinkFbWithFile(linkfb, filePath) == 1)
+                            {
+                               
+                                var (existingIdFb, existingTenFb, existingSongTai, existingDenTu, existingThongTinKhac) = ExcellHelp.Instance.GetDataByLink(filePath, linkfb);         
+                                    // Nếu có dữ liệu trùng khớp, thêm vào DataGridView                              
+                                    dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, existingIdFb, existingTenFb, existingDenTu, existingSongTai, existingThongTinKhac);                                
+                            }                                    
+                            else
+                            {
+                                person = Libary.Instance.ThongtinPerson(Driver, linkfb);
+                                foreach (Person per in person)
+                                {
+                                    string songtai = per.NoiSong.ToString();
+                                    string dentu = per.DenTu.ToString();
+                                    string tenfb = per.TenFb.ToString();
+                                    string thongtinkhac = per.HocVan.ToString();
+                                    lbStatus.Text = "tìm thấy " + j + " đối tượng share";
+                                    dgvGetShareOnePost.Rows.Add(j++, diachichiase, linkfb, idfb, tenfb, dentu, songtai,thongtinkhac);
+                                    
+                                }
+                            }
                         }
+                        else
+                        {
+                            MessageBox.Show("File Excel không tồn tại!");
+                        }
+                                                
                     }
                 }
                     Driver.Quit();
             }
             else { MessageBox.Show("Chưa nhập địa chỉ bài viết"); }
            
-        }
-
+        }        
         private void btnSavePerson_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow row in dgvGetShareOnePost.Rows)
+            try
             {
-                if (!row.IsNewRow)
+                string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                if (!Directory.Exists(folderPath))
                 {
-                    string linkfb = "";
-                    if (row.Cells["linkfb"].Value.ToString() != null) linkfb = row.Cells["linkfb"].Value.ToString();
-                    string idfb = "";
-                    if (row.Cells["IdFb"].Value.ToString() != null) idfb = row.Cells["IdFb"].Value.ToString();
-                    string tenfb = "";
-                    if (row.Cells["DisplayName"].Value.ToString() != null) idfb = row.Cells["DisplayName"].Value.ToString();
-                    string noisong = "";
-                    if (row.Cells["from"].Value.ToString() != null) noisong = row.Cells["from"].Value.ToString();
-                    string dentu = "";
-                    if (row.Cells["live"].Value.ToString() != null) dentu= row.Cells["live"].Value.ToString();
-                    string hocvan = "";
-                    if (row.Cells["thongtinkhac"].Value.ToString() != null) hocvan = row.Cells["thongtinkhac"].Value.ToString();
-                    if (PersonDAO.Instance.ShearchPerson("LinkFb", linkfb) == false)
-                    {
-                        string query = "INSERT INTO Person(TenFb, LinkFb, IdFbPerson, NoiSong, DenTu, HocVan) VALUES (N'" + tenfb + "', N'" + linkfb + "', N'" + idfb + "', N'" + noisong + "', N'" + dentu + "', N'" + hocvan + "')";
-                        DataProvider.Instance.ExecuteQuery(query);
-                        MessageBox.Show("luu doi tuong thanh cong");
-                    }
-                }    
-                    
+                    Directory.CreateDirectory(folderPath);
+                }
+                string fileName = "DanhSachDoiTuong.xlsx";
+                string filePath = Path.Combine(folderPath, fileName);
+                string header = "STT, Địa chỉ Facebook,ID Facebook,Tên Facebook,Đến từ,Sống tại,Thông tin khác";
+                ExcellHelp.Instance.DesignExcelFile(header, filePath, "Danh sách ĐT");
+              ExcellHelp.Instance.UpdateExcelPersonShare(filePath,dgvGetShareOnePost);              
+                System.Diagnostics.Process.Start("explorer.exe", folderPath);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi ghi Excel: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }          
         }
     }
 }

@@ -32,10 +32,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txbLinkPost = new System.Windows.Forms.TextBox();
             this.dgvGetShareOnePost = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txbSumShare = new System.Windows.Forms.TextBox();
-            this.btnGet = new System.Windows.Forms.Button();
-            this.btnSavePerson = new System.Windows.Forms.Button();
             this.STT = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LinkShare = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.linkfb = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -44,6 +40,11 @@
             this.from = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.live = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.thongtinkhac = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txbSumShare = new System.Windows.Forms.TextBox();
+            this.btnGet = new System.Windows.Forms.Button();
+            this.btnSavePerson = new System.Windows.Forms.Button();
+            this.lbStatus = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGetShareOnePost)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,7 +52,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(42, 61);
+            this.label1.Location = new System.Drawing.Point(42, 23);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(166, 23);
             this.label1.TabIndex = 0;
@@ -59,7 +60,7 @@
             // 
             // txbLinkPost
             // 
-            this.txbLinkPost.Location = new System.Drawing.Point(276, 63);
+            this.txbLinkPost.Location = new System.Drawing.Point(276, 25);
             this.txbLinkPost.Name = "txbLinkPost";
             this.txbLinkPost.Size = new System.Drawing.Size(581, 22);
             this.txbLinkPost.TabIndex = 1;
@@ -91,45 +92,6 @@
             this.dgvGetShareOnePost.RowTemplate.Height = 24;
             this.dgvGetShareOnePost.Size = new System.Drawing.Size(1082, 447);
             this.dgvGetShareOnePost.TabIndex = 2;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.White;
-            this.label2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.Blue;
-            this.label2.Location = new System.Drawing.Point(42, 99);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(217, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Số lượng Share thu được";
-            // 
-            // txbSumShare
-            // 
-            this.txbSumShare.Location = new System.Drawing.Point(276, 100);
-            this.txbSumShare.Name = "txbSumShare";
-            this.txbSumShare.Size = new System.Drawing.Size(581, 22);
-            this.txbSumShare.TabIndex = 4;
-            // 
-            // btnGet
-            // 
-            this.btnGet.Location = new System.Drawing.Point(927, 65);
-            this.btnGet.Name = "btnGet";
-            this.btnGet.Size = new System.Drawing.Size(102, 57);
-            this.btnGet.TabIndex = 5;
-            this.btnGet.Text = "Thống KÊ";
-            this.btnGet.UseVisualStyleBackColor = true;
-            this.btnGet.Click += new System.EventHandler(this.btnGet_Click);
-            // 
-            // btnSavePerson
-            // 
-            this.btnSavePerson.Location = new System.Drawing.Point(1134, 149);
-            this.btnSavePerson.Name = "btnSavePerson";
-            this.btnSavePerson.Size = new System.Drawing.Size(77, 57);
-            this.btnSavePerson.TabIndex = 6;
-            this.btnSavePerson.Text = "Lưu Đối Tượng";
-            this.btnSavePerson.UseVisualStyleBackColor = true;
-            this.btnSavePerson.Click += new System.EventHandler(this.btnSavePerson_Click);
             // 
             // STT
             // 
@@ -187,11 +149,62 @@
             this.thongtinkhac.Name = "thongtinkhac";
             this.thongtinkhac.Width = 125;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.White;
+            this.label2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.Blue;
+            this.label2.Location = new System.Drawing.Point(42, 61);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(217, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Số lượng Share thu được";
+            // 
+            // txbSumShare
+            // 
+            this.txbSumShare.Location = new System.Drawing.Point(276, 62);
+            this.txbSumShare.Name = "txbSumShare";
+            this.txbSumShare.Size = new System.Drawing.Size(581, 22);
+            this.txbSumShare.TabIndex = 4;
+            // 
+            // btnGet
+            // 
+            this.btnGet.Location = new System.Drawing.Point(922, 27);
+            this.btnGet.Name = "btnGet";
+            this.btnGet.Size = new System.Drawing.Size(102, 57);
+            this.btnGet.TabIndex = 5;
+            this.btnGet.Text = "Thống KÊ";
+            this.btnGet.UseVisualStyleBackColor = true;
+            this.btnGet.Click += new System.EventHandler(this.btnGet_Click);
+            // 
+            // btnSavePerson
+            // 
+            this.btnSavePerson.Location = new System.Drawing.Point(1134, 149);
+            this.btnSavePerson.Name = "btnSavePerson";
+            this.btnSavePerson.Size = new System.Drawing.Size(77, 57);
+            this.btnSavePerson.TabIndex = 6;
+            this.btnSavePerson.Text = "Lưu Đối Tượng";
+            this.btnSavePerson.UseVisualStyleBackColor = true;
+            this.btnSavePerson.Click += new System.EventHandler(this.btnSavePerson_Click);
+            // 
+            // lbStatus
+            // 
+            this.lbStatus.AutoSize = true;
+            this.lbStatus.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.lbStatus.Location = new System.Drawing.Point(43, 111);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(208, 19);
+            this.lbStatus.TabIndex = 7;
+            this.lbStatus.Text = "Trạng Thái: Chờ hành động";
+            // 
             // fGetShareonePost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1237, 607);
+            this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.btnSavePerson);
             this.Controls.Add(this.btnGet);
             this.Controls.Add(this.txbSumShare);
@@ -224,5 +237,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn from;
         private System.Windows.Forms.DataGridViewTextBoxColumn live;
         private System.Windows.Forms.DataGridViewTextBoxColumn thongtinkhac;
+        private System.Windows.Forms.Label lbStatus;
     }
 }

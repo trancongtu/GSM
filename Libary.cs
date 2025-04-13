@@ -32,8 +32,8 @@ namespace CrawFB
         public ChromeOptions Options()
         {
             ChromeOptions option = new ChromeOptions();
-            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileTCT9.3.2025");
-            //option.AddArgument("--headless"); //chay ngam hay k
+            option.AddArgument("user-data-dir=C:/User/trant/PycharmProject/PythonProject/ProfileTCT29.3.2025");
+           option.AddArgument("--headless"); //chay ngam hay k
             option.AddArgument("--disable-infobars");
             option.AddArgument("start-maximized");
             option.AddArgument("--disable-extensions");

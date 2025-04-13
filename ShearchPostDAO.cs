@@ -12,7 +12,8 @@ namespace CrawFB.DAO
     public class ShearchPostDAO
     {
         private static ShearchPostDAO instance;
-        public static ShearchPostDAO Instance {
+        public static ShearchPostDAO Instance
+        {
             get { if (instance == null) instance = new ShearchPostDAO(); return ShearchPostDAO.instance; }
             private set { ShearchPostDAO.instance = value; }
         }
@@ -74,49 +75,243 @@ namespace CrawFB.DAO
             string trangthai = "Không xác định";
             string userName = string.Empty;
             string userLink = string.Empty;
-
-            // Tìm user thông thường
-            var userElement = postElement.FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
-            if (userElement.Count > 0)
-            {
-                userName = userElement[0].Text.Trim();
-                userLink = ShearchPostDAO.Instance.ExtractFbShortLink(userElement[0].GetAttribute("href"));
-                trangthai = "Bài cá nhân, Page tự đăng";
-            }
-            else
-            {
-                // Tìm user ở bài đăng đặc biệt
-                var specialpost = postElement.FindElements(By.CssSelector("span[class='xjp7ctv']>span>span>a"));
-                if (specialpost.Count > 0)
+            try {
+                // Tìm user thông thường
+                var userElement = postElement.FindElements(By.CssSelector("span[class='xjp7ctv'] > a"));
+                if (userElement.Count > 0)
                 {
-                    userName = specialpost[0].Text.Trim();
-                    userLink = ShearchPostDAO.Instance.ExtractFbShortLink(specialpost[0].GetAttribute("href"));
-                    trangthai = "Bài đăng đặc biệt";
+                    userName = userElement[0].Text.Trim();
+                    userLink = ShearchPostDAO.Instance.ExtractFbShortLink(userElement[0].GetAttribute("href"));
+                    trangthai = "Bài cá nhân, Page tự đăng";
+                }
+                else
+                {
+                    // Tìm user ở bài đăng đặc biệt
+                    var specialpost = postElement.FindElements(By.CssSelector("span[class='xjp7ctv']>span>span>a"));
+                    if (specialpost.Count > 0)
+                    {
+                        userName = specialpost[0].Text.Trim();
+                        userLink = ShearchPostDAO.Instance.ExtractFbShortLink(specialpost[0].GetAttribute("href"));
+                        trangthai = "Bài đăng đặc biệt";
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Lỗi nam trong GetPostInfo: " + ex.Message);
+            }
+
 
             return (trangthai, userName, userLink);
         }
         public string ShortenFacebookPostLink(string originalLink)
         {
+            if (string.IsNullOrEmpty(originalLink))
+            {
+                Console.WriteLine("⚠️ Link rỗng hoặc null.");
+                return originalLink;
+            }
+
             try
             {
-                // Tìm vị trí của "?__" để cắt bớt phần dư
-                int index = originalLink.IndexOf("?__");
-                if (index != -1)
+                // Tìm chỉ số xuất hiện đầu tiên giữa ?__ và &__
+                int indexQuestion = originalLink.IndexOf("?__");
+                int indexAmp = originalLink.IndexOf("&__");
+
+                int cutIndex = -1;
+
+                if (indexQuestion != -1 && indexAmp != -1)
                 {
-                    originalLink = originalLink.Substring(0, index);
+                    cutIndex = Math.Min(indexQuestion, indexAmp);
+                }
+                else if (indexQuestion != -1)
+                {
+                    cutIndex = indexQuestion;
+                }
+                else if (indexAmp != -1)
+                {
+                    cutIndex = indexAmp;
                 }
 
-                // Chuyển domain về dạng rút gọn "https://fb.com/"
+                // Cắt chuỗi tại vị trí sớm nhất nếu có
+                if (cutIndex != -1)
+                {
+                    originalLink = originalLink.Substring(0, cutIndex);
+                }
+
+                // Thay thế domain Facebook về dạng rút gọn
                 originalLink = originalLink.Replace("https://www.facebook.com/", "https://fb.com/");
+                originalLink = originalLink.Replace("https://web.facebook.com/", "https://fb.com/");
 
                 return originalLink;
             }
-            catch
+            catch (Exception ex)
             {
-                return originalLink; // Trả về link gốc nếu có lỗi
+                Console.WriteLine("❌ Lỗi trong ShortenFacebookPostLink: " + ex.Message);
+                return originalLink;
             }
         }
+        public class PostTypeResult
+        {
+            public string PostType { get; set; }              // "original", "share", "unknown"
+            public string ShareTime { get; set; }             // Thời gian share
+            public string OriginalTime { get; set; }          // Thời gian gốc
+            public string LinkBaiViet { get; set; }           // Link hiển thị (bài gốc hoặc bài share)
+            public string SharePostLink { get; set; }         // Link bài share
+            public string OriginalPostLink { get; set; }      // Link bài gốc
+        }
+        public PostTypeResult PostTypeDetector(List<string> timeList, List<string> linkList)
+        {
+            var result = new PostTypeResult
+            {
+              
+                ShareTime = "N/A",
+                OriginalTime = "N/A",
+                LinkBaiViet = "N/A",
+                SharePostLink = "N/A",
+                OriginalPostLink = "N/A"
+            };
+
+            try
+            {
+                if (timeList.Count == 1 && linkList.Count >= 1)
+                {
+                    // 🔸 Bài viết tự đăng                 
+                    result.ShareTime = CleanTimeString(timeList[0]);
+                    result.LinkBaiViet = ShearchPostDAO.Instance.ShortenFacebookPostLink(linkList[0]);
+                }
+                else if (timeList.Count == 2 && linkList.Count >= 2)
+                {
+                    // 🔹 Bài viết share                   
+                    result.ShareTime = CleanTimeString(timeList[0]);
+                    result.OriginalTime = CleanTimeString(timeList[1]);
+                    result.SharePostLink = ShearchPostDAO.Instance.ShortenFacebookPostLink(linkList[0]);
+                    result.OriginalPostLink = linkList[1];
+                    result.LinkBaiViet = ShearchPostDAO.Instance.ShortenFacebookPostLink(linkList[0]);
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Không xác định được loại bài: timeList.Count = {timeList.Count}, linkList.Count = {linkList.Count}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Lỗi nam trong PostTypeDetector: " + ex.Message);
+            }
+
+            return result;
+        }
+        public (List<string> timeList, List<string> linkList) ExtractTimeAndLinks(IEnumerable<IWebElement> postinfor)
+        {
+            List<string> timeList = new List<string>();
+            List<string> linkList = new List<string>();
+
+
+            foreach (var temp in postinfor) // Lướt từng infor lấy text để so sánh
+            {
+
+                string textContent = temp.Text.Trim();
+                Console.WriteLine("textContent: " + textContent);
+
+                if (!string.IsNullOrEmpty(textContent) && Regex.IsMatch(textContent, @"(\d+\s*(giờ|phút|ngày|hôm qua|Tháng))", RegexOptions.IgnoreCase))
+                {
+                    if (!timeList.Contains(textContent))
+                    {
+                        var hrefElement = temp.FindElements(By.CssSelector("a[class*='x1i10hfl']")); // Lấy href
+                        Console.WriteLine($"so href: {hrefElement.Count()}");
+                        if (hrefElement.Count > 0)
+                        {
+                            timeList.Add(textContent);
+                            Console.WriteLine("Đã thêm thời gian vào timeList");
+
+                            if (hrefElement.Count == 1)
+                            {
+                                string href = hrefElement[0].GetAttribute("href");
+                                if (!linkList.Contains(href)) // Kiểm tra xem link đã có trong linkList chưa
+                                {
+                                    linkList.Add(href);
+                                    Console.WriteLine("Chỉ có 1 link, thêm vào linkList");
+                                }
+                            }
+                            else if (hrefElement.Count >= 2)
+                            {
+                                string href1 = hrefElement[0].GetAttribute("href");
+                                string href2 = hrefElement[1].GetAttribute("href");
+
+                                if (!linkList.Contains(href1)) // Kiểm tra xem link 1 đã có trong linkList chưa
+                                {
+                                    linkList.Add(href1);
+                                    Console.WriteLine("Có 2 hoặc nhiều link, thêm vào linkList");
+                                }
+                                if (!linkList.Contains(href2)) // Kiểm tra xem link 2 đã có trong linkList chưa
+                                {
+                                    linkList.Add(href2);
+                                    Console.WriteLine("Có 2 hoặc nhiều link, thêm vào linkList");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Không có link");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Thời gian đã có trong timeList, không thêm lại");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Không thêm vào timeList vì không chứa thông tin giờ phút");
+                }
+            }
+
+            // Trả về Tuple chứa timeList và linkList
+            return (timeList, linkList);
+        }
+        public static string CleanTimeString(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "N/A";
+
+            // Loại bỏ ký tự xuống dòng, dấu chấm giữa (·), tab, nhiều khoảng trắng
+            string cleaned = Regex.Replace(raw, @"[\n\r\t]+", " ");
+            cleaned = Regex.Replace(cleaned, @"\s*·\s*", " "); // bỏ dấu ·
+            cleaned = Regex.Replace(cleaned, @"\s{2,}", " "); // bỏ khoảng trắng dư
+            return cleaned.Trim();
+        }
+        public (string, string, string) HandleVideoPost(IWebElement post) // hàm láy bài viết đăng video
+        {
+            string trangthai = "bài đăng có video";           
+            string shareTime = "N/A";
+            string linkBaiViet = "N/A";
+
+            try
+            {
+                var videoLinks = post.FindElements(By.CssSelector("a[class ='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xkrqix3 x1sur9pj x1s688f']"));
+                if (videoLinks.Count > 0)
+                {
+                    linkBaiViet = videoLinks[0].GetAttribute("href").ToString();
+                    Console.WriteLine("🔗 Video Link: " + linkBaiViet);
+                }
+
+                var timeTags = post.FindElements(By.CssSelector("span[class = 'html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j']"));
+                foreach (var t in timeTags)
+                {
+                    if (t.Text.Contains("phút") || t.Text.Contains("giờ") || t.Text.Contains("ngày"))
+                    {
+                        shareTime = t.Text.Trim();
+                        Console.WriteLine("⏰ Video Time: " + shareTime);
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Lỗi trong HandleVideoPost: " + ex.Message);
+            }
+
+            return (trangthai, shareTime, linkBaiViet);
+        }
+        
     }
 }

@@ -35,13 +35,6 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.paneldata = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.STT = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.noidung = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.diachibv = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timepost = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.countshare = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.countcomment = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stattus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelbinding = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.txblinkbv = new System.Windows.Forms.TextBox();
@@ -49,6 +42,14 @@
             this.txbnoidunggoc = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFullPost = new System.Windows.Forms.TextBox();
+            this.STT = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.noidung = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.diachibv = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timepost = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.countshare = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.countcomment = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stattus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.diemtieucuc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelmenu.SuspendLayout();
             this.paneldata.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -126,7 +127,8 @@
             this.timepost,
             this.countshare,
             this.countcomment,
-            this.stattus});
+            this.stattus,
+            this.diemtieucuc});
             this.dataGridView1.Location = new System.Drawing.Point(9, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
@@ -134,55 +136,6 @@
             this.dataGridView1.Size = new System.Drawing.Size(1362, 310);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
-            // 
-            // STT
-            // 
-            this.STT.HeaderText = "STT";
-            this.STT.MinimumWidth = 6;
-            this.STT.Name = "STT";
-            this.STT.Width = 50;
-            // 
-            // noidung
-            // 
-            this.noidung.HeaderText = "Nội Dung";
-            this.noidung.MinimumWidth = 6;
-            this.noidung.Name = "noidung";
-            this.noidung.Width = 200;
-            // 
-            // diachibv
-            // 
-            this.diachibv.HeaderText = "Địa Chỉ Bài viết";
-            this.diachibv.MinimumWidth = 6;
-            this.diachibv.Name = "diachibv";
-            this.diachibv.Width = 200;
-            // 
-            // timepost
-            // 
-            this.timepost.HeaderText = "thời gian đăng";
-            this.timepost.MinimumWidth = 6;
-            this.timepost.Name = "timepost";
-            this.timepost.Width = 125;
-            // 
-            // countshare
-            // 
-            this.countshare.HeaderText = "Lượng Share";
-            this.countshare.MinimumWidth = 6;
-            this.countshare.Name = "countshare";
-            this.countshare.Width = 80;
-            // 
-            // countcomment
-            // 
-            this.countcomment.HeaderText = "Lượng bình luận";
-            this.countcomment.MinimumWidth = 6;
-            this.countcomment.Name = "countcomment";
-            this.countcomment.Width = 80;
-            // 
-            // stattus
-            // 
-            this.stattus.HeaderText = "Trạng Thái";
-            this.stattus.MinimumWidth = 6;
-            this.stattus.Name = "stattus";
-            this.stattus.Width = 125;
             // 
             // panelbinding
             // 
@@ -251,6 +204,62 @@
             this.txtFullPost.Size = new System.Drawing.Size(583, 150);
             this.txtFullPost.TabIndex = 0;
             // 
+            // STT
+            // 
+            this.STT.HeaderText = "STT";
+            this.STT.MinimumWidth = 6;
+            this.STT.Name = "STT";
+            this.STT.Width = 50;
+            // 
+            // noidung
+            // 
+            this.noidung.HeaderText = "Nội Dung";
+            this.noidung.MinimumWidth = 6;
+            this.noidung.Name = "noidung";
+            this.noidung.Width = 200;
+            // 
+            // diachibv
+            // 
+            this.diachibv.HeaderText = "Địa Chỉ Bài viết";
+            this.diachibv.MinimumWidth = 6;
+            this.diachibv.Name = "diachibv";
+            this.diachibv.Width = 200;
+            // 
+            // timepost
+            // 
+            this.timepost.HeaderText = "thời gian đăng";
+            this.timepost.MinimumWidth = 6;
+            this.timepost.Name = "timepost";
+            this.timepost.Width = 125;
+            // 
+            // countshare
+            // 
+            this.countshare.HeaderText = "Lượng Share";
+            this.countshare.MinimumWidth = 6;
+            this.countshare.Name = "countshare";
+            this.countshare.Width = 80;
+            // 
+            // countcomment
+            // 
+            this.countcomment.HeaderText = "Lượng bình luận";
+            this.countcomment.MinimumWidth = 6;
+            this.countcomment.Name = "countcomment";
+            this.countcomment.Width = 80;
+            // 
+            // stattus
+            // 
+            this.stattus.HeaderText = "Trạng Thái";
+            this.stattus.MinimumWidth = 6;
+            this.stattus.Name = "stattus";
+            this.stattus.Width = 125;
+            // 
+            // diemtieucuc
+            // 
+            this.diemtieucuc.HeaderText = "Điểm tiêu cực";
+            this.diemtieucuc.MinimumWidth = 6;
+            this.diemtieucuc.Name = "diemtieucuc";
+            this.diemtieucuc.Width = 50;
+            // 
             // FShearchPost2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -281,13 +290,6 @@
         private System.Windows.Forms.Button btnShearch;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn STT;
-        private System.Windows.Forms.DataGridViewTextBoxColumn noidung;
-        private System.Windows.Forms.DataGridViewTextBoxColumn diachibv;
-        private System.Windows.Forms.DataGridViewTextBoxColumn timepost;
-        private System.Windows.Forms.DataGridViewTextBoxColumn countshare;
-        private System.Windows.Forms.DataGridViewTextBoxColumn countcomment;
-        private System.Windows.Forms.DataGridViewTextBoxColumn stattus;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txbnoidunggoc;
         private System.Windows.Forms.Label label1;
@@ -295,5 +297,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txblinkbv;
         private System.Windows.Forms.Button btnsetup;
+        private System.Windows.Forms.DataGridViewTextBoxColumn STT;
+        private System.Windows.Forms.DataGridViewTextBoxColumn noidung;
+        private System.Windows.Forms.DataGridViewTextBoxColumn diachibv;
+        private System.Windows.Forms.DataGridViewTextBoxColumn timepost;
+        private System.Windows.Forms.DataGridViewTextBoxColumn countshare;
+        private System.Windows.Forms.DataGridViewTextBoxColumn countcomment;
+        private System.Windows.Forms.DataGridViewTextBoxColumn stattus;
+        private System.Windows.Forms.DataGridViewTextBoxColumn diemtieucuc;
     }
 }
